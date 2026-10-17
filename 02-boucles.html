@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L'humain sur la boucle</title>
+<meta name="description" content="Du chat à l'événement : l'humain sollicité au bon moment, critère d'arrêt vérifié par un tiers, alerte qui ouvre une PR draft, sécurité en fil rouge.">
+<link rel="icon" type="image/png" href="img/mark-64.png">
+<link rel="apple-touch-icon" href="img/mark-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .brand{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:1100px){
+  body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;width:270px;margin:0;padding:24px 14px;border-bottom:none;border-right:1px solid var(--rule);overflow-y:auto}
+  .topnav ol{flex-direction:column;white-space:normal;max-width:none;gap:2px;font-size:.88rem}
+  .topnav .brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px}
+}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Modules"><a class="brand" href="index.html"><img src="img/mark-180.png" alt="" width="34" height="34">Humai</a><ol><li><a href="index.html"><img class="fi" src="img/mark-64.png" alt="" width="20" height="20">Sommaire</a></li><li><a href="01-charge-cognitive.html"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20">1 · Charge cognitive</a></li><li><a href="02-boucles.html" aria-current="page"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20">2 · Humain sur la boucle</a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Module 2 · Boucles</span>
+  <h1>L'humain sur la boucle</h1>
+  <p class="lede">Un client en cours d'installation reçoit un email lui annonçant que ses identifiants sont refusés et son intégration suspendue. C'est faux, et 63 minutes après qu'un humain a tranché, le correctif est en production. Ce module décrit les boucles qui le permettent, et la place qu'y garde l'humain : sur la boucle, pas dedans. Il n'attend plus devant un chat, il est sollicité quand un événement le demande. Un agent ne s'arrête pas quand il a écrit du code, il s'arrête quand un état vérifiable est atteint, et chaque boucle a un signal d'entrée, un critère d'arrêt et un garde-fou.</p>
+</header>
+
+<section>
+  <h2>Au départ : un email qui n'aurait pas dû partir</h2>
+  <p>On installe un nouveau client. Pendant le paramétrage, un agent tente de se connecter à son logiciel de gestion en parallèle de l'équipe, échoue, et le système fait ce qu'on lui a appris : il suspend l'intégration et envoie au client un email « vos identifiants sont refusés ». Le client n'a rien fait de travers, on a bien ses accès. Un premier contact avec Wavo qui commence par une alarme, c'est le genre de bug qui coûte de la confiance.</p>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>14 octobre. 12h50, l'alerte tombe dans le canal des ops. 13h26, le chargé d'onboarding la commente dans le fil : l'email est utile pour un client en production, trop tôt pour un client qu'on installe. 13h48, il ajoute un doute : des rachats de test qu'il avait passés le matin ont été annulés, peut-être par l'agent.</p>
+<p>14h43, un dev tague <code>@Odette job-story</code> dans le fil. Odette, notre outil de pilotage interne, crée la tâche, la range sous la feature de surveillance des workflows, et un agent l'implémente. 15h46, Odette repasse dans le fil : déployé en production. Soit 2h20 après le signalement, dont 1h17 à attendre qu'un humain s'en saisisse, et 63 minutes de la décision à la production.</p>
+<p>Le lendemain, dans le même fil, le dev sépare les 2 sujets : les rachats annulés ne venaient pas de l'agent mais d'une étape de l'assistant d'installation, qui devient une tâche à part. Et quand on lui propose de couper tous les emails en attendant mieux, il garde celui qui sert aux clients en production.</p>
+<p>Pour un bug, même geste avec <code>@Odette bug-fix</code>, et <code>-auto</code> pour que l'agent aille seul jusqu'à la PR.</p></div>
+  <p>Ce qui est parti en production n'est pas un correctif technique, c'est une règle produit : pendant l'installation, un premier échec ne suspend plus rien et ne prévient plus le client, il crée une tâche pour l'équipe. L'agent a écrit le code. L'humain a décidé quand un client mérite d'être alerté, et a démêlé 2 causes que le fil avait confondues.</p>
+  <p>Et le chrono le dit sans détour : la partie la plus longue n'a pas été le travail de l'agent, mais l'attente d'un humain disponible. C'est le sujet de ce module.</p>
+  <p>La demande naît là où on en parle déjà, et tout y revient. Pas de formulaire ni d'outil de tickets à ouvrir. Le message devient la tâche, et celui qui l'a posté voit passer le plan, la PR et la mise en production sans avoir à demander où ça en est.</p>
+  <ul>
+    <li><b>Chacun tranche ce qu'il connaît.</b> Le comportement attendu et la priorité reviennent au demandeur, les choix techniques à l'équipe tech, dans le même fil.</li>
+    <li><b>Le fil fait foi.</b> Il garde l'historique de la décision, lisible par un collègue absent comme par un agent.</li>
+  </ul>
+  <figure class="diagram"><img src="img/boucle-utilisateur.png" alt="Une demande part d'un fil Slack : l'utilisateur tague Odette, qui crée la tâche puis le plan ; une PR est ouverte par un dev ou un agent Claude, passe la CI et la revue, puis part en production. L'avancement et les choix produit reviennent dans le fil, où l'équipe tech tranche aussi les choix techniques." loading="lazy"><figcaption>Chez Wavo. Noir : le trajet de la demande. Violet : ce qui revient dans le fil.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Sur la boucle, pas dedans</h2>
+  <p>À force de parler de « boucles d'agents », on oublie l'humain, qui n'a pas disparu : il a changé de place. Les chercheurs en systèmes autonomes distinguent 3 positions :</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Position</th><th>Ce que fait l'humain</th><th>Pour quoi</th></tr></thead>
+    <tbody>
+      <tr><td><b>Dans la boucle</b></td><td>Il valide chaque étape avant que l'agent continue.</td><td>L'irréversible : une écriture en production, une suppression, un secret.</td></tr>
+      <tr><td><b>Sur la boucle</b></td><td>Il fixe l'objectif et le critère d'arrêt, laisse tourner, est prévenu aux moments qui comptent, et peut reprendre la main à tout moment.</td><td>Le cas par défaut, et le sujet de ce module.</td></tr>
+      <tr><td><b>Hors de la boucle</b></td><td>Il n'intervient plus.</td><td>Ce qui est sûr, réversible, et vérifié par une machine.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Dans la boucle, l'humain devient le goulot : l'agent attend à chaque pas, et l'attention s'use à valider ce qui n'en avait pas besoin. Sur la boucle, il garde la main sur l'intention et sur les décisions, et laisse l'exécution à l'agent. On retrouve la place décrite au début du parcours (module <a href="01-charge-cognitive.html">1</a>) : l'humain cadre, tranche et relit, et l'IA le prolonge sans le remplacer.</p>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Sur la boucle par défaut : la demande porte son objectif, l'agent va jusqu'à la PR, un humain la relit et la merge. Dans la boucle pour la production : aucune commande qui écrit en prod n'est lancée par un agent, elle est remise telle quelle à l'humain, qui la lance lui-même.</p></div>
+</section>
+
+<section>
+  <h2>Du chat à l'événement</h2>
+  <p>La place de l'humain a changé en 4 étapes. Chacune règle un problème de la précédente, et en crée un nouveau.</p>
+  <h3>1. Une conversation à la fois</h3>
+  <p>Nos premiers pas avec l'IA ressemblaient à un chat. On écrit une consigne, on attend la réponse, on relit, on relance. Les réponses arrivent en quelques minutes, donc on reste devant l'écran. L'humain est synchrone, il attend chaque réponse, et séquentiel, une demande après l'autre.</p>
+  <figure class="diagram"><img src="img/evenement-etape1.png" alt="L'humain envoie une consigne à une session de chat et attend la réponse, quelques minutes plus tard." loading="lazy"><figcaption>Simple et lisible, mais l'humain attend à chaque tour.</figcaption></figure>
+  <h3>2. Des sessions plus longues, en parallèle</h3>
+  <p>Puis les modèles ont su mener des tâches plus complexes : écrire une PR entière, mener un diagnostic, rédiger un plan. Une session dure désormais des dizaines de minutes, parfois des heures. Rester à la regarder n'a plus de sens, alors on en lance plusieurs, côte à côte.</p>
+  <p>Le problème change de nature. Chaque session envoie ses notifications : elle a fini, elle pose une question, elle est bloquée. L'humain passe de l'une à l'autre, et chaque bascule lui demande de recharger le contexte d'un sujet différent. Ce changement de contexte permanent fatigue et embrouille : on finit par ne plus savoir quelle session attend quoi.</p>
+  <figure class="diagram"><img src="img/evenement-etape2.png" alt="L'humain lance 3 sessions en parallèle (une PR, un diagnostic, un plan). Chacune lui renvoie une notification : finie, une question, bloquée." loading="lazy"><figcaption>On gagne en débit, on perd en clarté : l'humain jongle.</figcaption></figure>
+  <h3>3. L'humain fait le relais</h3>
+  <p>Et le travail ne naît pas dans le chat. Il arrive d'ailleurs : un email de client, une alerte de production, la réaction d'un collègue sur une fonctionnalité. Pour qu'une session s'en occupe, l'humain doit lire l'information, la copier, ouvrir une session et la coller avec le contexte qui va bien.</p>
+  <p>C'est là que l'humain devient le maillon critique. Tout passe par lui, et s'il est en réunion ou concentré sur autre chose, rien ne démarre. Son temps part dans le copier-coller plutôt que dans les décisions.</p>
+  <figure class="diagram"><img src="img/evenement-etape3.png" alt="Un email, une alerte de prod et une réaction produit arrivent tous chez l'humain, qui lit, copie et colle, puis lance une session à la main." loading="lazy"><figcaption>L'humain est sur le chemin de chaque information.</figcaption></figure>
+  <h3>4. Les événements branchés sur les sessions</h3>
+  <p>L'étape suivante consiste à retirer l'humain du chemin, sans le retirer de la boucle. On branche directement les événements sur les sessions : l'alerte lance elle-même le diagnostic, le message dans un fil devient une tâche qu'un agent prend en charge. La session travaille seule, et ne vient chercher l'humain qu'aux moments où il est irremplaçable : prendre connaissance des enjeux, trancher, relire.</p>
+  <figure class="diagram"><img src="img/evenement-etape4.png" alt="Un email, une alerte de prod et une réaction produit lancent directement une session. La session ne sollicite l'humain qu'au moment de décider : prendre connaissance, trancher, relire." loading="lazy"><figcaption>Chez Wavo, c'est déjà le cas pour les alertes et les demandes postées dans Slack.</figcaption></figure>
+  <p>C'est ce que veut dire « sur la boucle » : l'humain ne pousse plus le travail, il est appelé quand sa décision compte. Voici les 3 déclencheurs qu'on a branchés.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Déclencheur</th><th>Exemple</th><th>Quand l'humain intervient</th></tr></thead>
+    <tbody>
+      <tr><td><b>Un message</b></td><td>Un collègue signale un bug ou demande une fonctionnalité dans un fil.</td><td>Pour trancher le comportement attendu, puis pour merger.</td></tr>
+      <tr><td><b>Une panne</b></td><td>Un job de données casse en production.</td><td>Pour merger le correctif, puis rejouer ce qui a échoué.</td></tr>
+      <tr><td><b>Un horaire</b></td><td>Chaque lundi, une session relit les détections de sécurité de la semaine.</td><td>Pour arbitrer ce qui touche aux accès et au trafic des clients.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Ce changement ne rend pas l'humain moins utile. Il protège son attention, qui est la ressource rare (module <a href="01-charge-cognitive.html">1</a>) : moins de temps à attendre, plus de temps sur les décisions qui lui reviennent. La contrepartie, c'est que chaque sollicitation doit arriver avec tout ce qu'il faut pour décider vite : le diagnostic, la PR, la commande prête à lancer.</p>
+  <div class="trap"><b>Ce qui reste à régler</b><span>Un événement ne sert à rien s'il attend un humain occupé ailleurs. Dans l'exemple de l'email, 1h17 sur 2h20 ont été perdues avant que quelqu'un tague la tâche. La boucle est rapide, la prise en main l'est moins.</span></div>
+</section>
+
+<section>
+  <h2>Quatre boucles, quatre échelles de temps</h2>
+  <div class="rings">
+    <svg viewBox="0 0 260 260" role="img" aria-label="Quatre cercles concentriques : le tour, la PR, l'alerte, et la méta-boucle à l'extérieur">
+      <circle cx="130" cy="130" r="120" fill="none" stroke="var(--l4)" stroke-width="3"/>
+      <circle cx="130" cy="130" r="88" fill="none" stroke="var(--l3)" stroke-width="3"/>
+      <circle cx="130" cy="130" r="56" fill="none" stroke="var(--l2)" stroke-width="3"/>
+      <circle cx="130" cy="130" r="26" fill="var(--l1)" fill-opacity=".15" stroke="var(--l1)" stroke-width="3"/>
+      <text x="130" y="134" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--l1)">tour</text>
+      <text x="130" y="88" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--l2)">PR</text>
+      <text x="130" y="57" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--l3)">alerte</text>
+      <text x="130" y="25" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="var(--l4)">méta</text>
+    </svg>
+    <ul class="legend">
+      <li><i class="dot" style="background:var(--l1)"></i><div><b>Le tour</b><span class="t">secondes · l'agent a-t-il le droit de rendre la main ?</span></div></li>
+      <li><i class="dot" style="background:var(--l2)"></i><div><b>La PR</b><span class="t">minutes · CI, revue, corrections, jusqu'au feu vert et au déploiement.</span></div></li>
+      <li><i class="dot" style="background:var(--l3)"></i><div><b>L'alerte</b><span class="t">minutes à heures · une panne devient une tâche et une PR draft, sans humain pour démarrer.</span></div></li>
+      <li><i class="dot" style="background:var(--l4)"></i><div><b>La méta-boucle</b><span class="t">semaines · ce qui frotte devient une règle, un garde-fou ou une procédure, puis on mesure.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>Le tour : un objectif écrit, vérifié par un tiers</h2>
+  <p>C'est sans doute l'idée la plus facile à reprendre ailleurs : toute demande qui lance une session autonome porte un <b>critère d'arrêt formulé comme un état observable</b>, pas comme une action : « la PR existe et est liée à la tâche », plutôt que « ouvre une PR ».</p>
+  <ul>
+    <li><b>Un contrôle déterministe</b> à chaque tentative d'arrêt : s'il reste du travail non commité ou non poussé, l'agent repart. Indispensable dès que l'agent tourne sur une machine jetable.</li>
+    <li><b>Un contrôle par un second modèle</b>, qui lit le critère et va vérifier l'état réel (le dépôt, la forge, le ticket) au lieu de croire le récit de la session. Il laisse partir si l'objectif est atteint, si une autre session le couvre déjà, ou si on attend un humain.</li>
+    <li><b>Une soupape</b> : un plafond de relances consécutives, pour qu'un critère mal écrit ne fasse pas tourner la session indéfiniment.</li>
+  </ul>
+  <p class="note">Ce qui change par rapport à un simple « continue jusqu'à ce que ce soit fini » : celui qui demande écrit le critère, et c'est un tiers qui le juge en regardant l'état réel, pas le modèle qui s'évalue lui-même.</p>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>La demande se termine par une ligne <code>Goal:</code>. 2 hooks <code>Stop</code> de Claude Code s'exécutent quand Claude veut rendre la main : un script shell qui bloque s'il reste des changements non poussés, puis un hook de type <code>agent</code> qui juge la ligne <code>Goal:</code> en interrogeant GitHub avec <code>gh</code>.</p>
+<pre><code>Goal: the task of the root cause of this failure and its draft PR
+are open and linked in this thread.</code></pre></div>
+</section>
+
+<section>
+  <h2>Un second avis avant d'agir et avant de rendre</h2>
+  <p>Le tiers peut aussi intervenir pendant la session. Un modèle plus fort, qui voit toute la conversation, est consulté à 2 moments : avant de s'engager sur une interprétation, et avant de déclarer la tâche finie. Il rattrape ainsi une mauvaise lecture de la demande avant que du code soit écrit dessus, et relit le livrable avant qu'il revienne à l'humain.</p>
+  <ul>
+    <li><b>Celui qui travaille et celui qui conseille sont deux modèles distincts.</b> Le second coûte plus cher par appel, mais il est appelé rarement.</li>
+    <li><b>Réservé aux tâches longues.</b> Sur une tâche courte, l'appel de plus et la latence ne rapportent presque rien. Les autres niveaux d'agents ont leur propre module.</li>
+  </ul>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Un réglage de Claude Code, <code>advisorModel</code> : Opus fait le travail, Fable conseille. C'est le modèle qui décide quand le consulter ; en pratique, il le fait dès qu'un sujet est à trancher, et systématiquement quand on planifie une tâche moyenne ou complexe.</p></div>
+</section>
+
+<section>
+  <h2>L'alerte : de la panne à la PR draft</h2>
+  <p>Quand un job casse en production, l'alerte elle-même lance une session, avec la tâche et son critère d'arrêt. La session diagnostique, rattache la panne à une cause racine, corrige et ouvre une PR draft. Un humain relit et merge.</p>
+  <figure class="diagram"><img src="img/alerte-pr.png" alt="Une alerte Slack lance une session Claude sur une MicroVM jetable du compte de dev. La session lit les logs de prod en lecture seule, prend un verrou pour créer ou rejoindre la tâche de la cause, puis ouvre une PR draft qu'un humain relit et merge." loading="lazy"><figcaption>Chez Wavo. Les numéros suivent une alerte de bout en bout.</figcaption></figure>
+  <ul>
+    <li><b>Une cause, une tâche, une PR.</b> Une même panne déclenche souvent plusieurs alertes à quelques secondes d'écart. Sans verrou partagé sur la décision « je crée ou je rejoins », on obtient plusieurs PR concurrentes.</li>
+    <li><b>Un disjoncteur.</b> Après quelques échecs de démarrage d'affilée, on arrête de lancer des sessions pour cette alerte : une permission manquante ne doit pas déclencher une tempête.</li>
+    <li><b>La boucle autonome a sa propre surveillance.</b> Le composant qui lance les sessions publie sa santé et déclenche une alarme s'il se tait.</li>
+  </ul>
+  <h3>Un cas limite, 35 minutes de bout en bout</h3>
+  <p>Un job qui publie les données d'un client vers l'application tombe en échec. La cause est un cas limite qu'aucun test n'avait prévu : 2 demandes identiques, envoyées à quelques secondes d'écart, ont voulu remplacer les mêmes lignes en même temps, et la base a refusé la seconde. Rien n'était perdu, mais rien ne la rejouait non plus.</p>
+  <figure class="diagram"><img src="img/frise-pipeline.png" alt="16h39, le job casse et l'alerte lance une session. 16h51, la cause est trouvée, la tâche créée et la PR draft ouverte, 12 minutes sans humain. 16h56, la CI est verte, l'humain relit et merge. 16h58, le correctif est en production. 17h14, l'agent donne le feu vert et l'humain rejoue l'exécution. Le rejeu réussit et l'alerte est close." loading="lazy"><figcaption>Chez Wavo, 12 octobre. En violet, les 2 seuls gestes humains.</figcaption></figure>
+  <p>L'humain n'a rien démarré. Il a été appelé 2 fois, et les 2 fois pour ce qui touche la production : merger le correctif, puis rejouer l'exécution en échec. Entre les deux, l'agent a suivi le déploiement et confirmé que le rejeu pouvait partir.</p>
+  <p>Il a aussi dit ce qu'il n'avait pas fait. Pourquoi la même demande est partie 2 fois reste une question ouverte, notée hors du périmètre de la tâche. Un agent qui rend la main avec ses angles morts écrits, c'est un humain qui sait où regarder ensuite.</p>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Le message d'alerte se termine par la ligne <code>Goal:</code> décrite plus haut : la tâche de la cause racine et sa PR draft doivent être ouvertes et liées dans le fil. La commande de rejeu en production est postée dans le fil, prête à copier ; c'est l'humain qui la lance.</p></div>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Les alertes Slack de la data platform mentionnent <code>@Claude</code> (Claude Tag). Un orchestrateur auto-hébergé, sur ECS, crée une MicroVM par session sur le compte AWS de dev. Un verrou DynamoDB sérialise « je crée ou je rejoins », et la création de PR est refusée si une autre PR du bot des 48 dernières heures touche les mêmes fichiers. D'autres portes d'entrée existent : une issue GitHub qui devient une PR, ou une tâche de notre outil de pilotage dont le plan est implémenté en CI.</p></div>
+  <div class="trap"><b>Ce qui a cassé</b><span>L'orchestrateur tournait sur un portable. Il s'est arrêté un vendredi et personne ne s'en est aperçu avant le lundi : 3 jours d'alertes sans session. Nous avons d'abord soupçonné un bug chez l'éditeur, alors que la cause était chez nous.</span></div>
+</section>
+
+<section>
+  <h2>Le fil rouge : la sécurité</h2>
+  <p>Toutes les boucles ne partent pas d'une panne. Certains sujets ne cassent jamais d'un coup : ils s'usent. La sécurité en est l'exemple type. Personne ne lève la main pour dire qu'un port est resté ouvert sur internet, et c'est justement le problème.</p>
+  <p>On l'a traitée comme un fil rouge plutôt que comme un projet. Un audit mené avec l'IA a passé en revue le code, les dépendances, l'historique du dépôt et la configuration du cloud. Il n'a pas produit un rapport à lire, mais des tâches, rangées dans une même feature et reprises une à une en PR. Puis 2 boucles prennent le relais pour que ça ne se dégrade pas :</p>
+  <ul>
+    <li><b>À chaque PR</b>, des analyses de sécurité tournent dans la CI et bloquent le merge si elles trouvent quelque chose.</li>
+    <li><b>Chaque semaine</b>, une session planifiée relit les détections de tous les comptes cloud et publie un compte rendu. Ce qui demande une correction rejoint la feature, et redevient une tâche puis une PR.</li>
+  </ul>
+  <p>L'humain n'y fait pas le tri ligne à ligne. Il intervient là où une machine ne peut pas juger seule : quand une règle risque de bloquer un vrai client. Pour le pare-feu de l'application, l'équipe a d'abord laissé les règles en observation, vérifié qu'elles ne bloquaient rien de légitime, puis seulement les a rendues bloquantes, en demandant à tous de signaler la moindre action impossible.</p>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>L'audit a produit 35 tâches dans une feature dédiée de notre outil de pilotage. Une vingtaine sont en production, le reste est planifié. La routine du lundi lit les détections de sécurité AWS ; les PR de la data platform sont bloquées par des scanners de code, de dépendances, d'images et de secrets.</p></div>
+</section>
+
+<section>
+  <h2>La PR : réagir aux événements, pas à l'horloge</h2>
+  <p>Une fois la PR ouverte, une procédure unique la suit : lire les checks, lire la revue, trier, corriger, repousser, passer en ready, puis suivre le merge et le déploiement qui en découle. Elle réagit à chaque check terminé ou nouveau commentaire. Un réveil programmé ne sert que de filet de secours : à intervalle fixe, on arrive toujours trop tôt ou trop tard.</p>
+  <p><b>Un seul chemin pour ouvrir une PR.</b> Les sessions n'ont pas le droit de passer à côté de la procédure, et c'est ce qui rend leur comportement prévisible.</p>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Le skill <code>github-pr</code>, lancé dans <code>/loop</code> avec un <code>Monitor</code> qui émet une ligne par événement GitHub.</p></div>
+</section>
+
+<section>
+  <h2>À reprendre</h2>
+  <ol>
+    <li>Placez l'humain sur la boucle par défaut, dans la boucle pour l'irréversible.</li>
+    <li>Laissez les événements lancer le travail, et faites venir l'humain avec tout ce qu'il faut pour décider vite.</li>
+    <li>Traitez les sujets qui s'usent, comme la sécurité, en fil rouge : un contrôle à chaque PR, une relecture planifiée, des tâches plutôt qu'un rapport.</li>
+    <li>Écrivez le critère d'arrêt dans la demande, comme un état observable.</li>
+    <li>Faites-le juger par un tiers qui regarde l'état réel, pas le transcript.</li>
+    <li>Sur les tâches longues, faites relire l'interprétation et le livrable par un modèle plus fort.</li>
+    <li>Une cause, une tâche, une PR : un verrou avant de créer.</li>
+    <li>Surveillez la boucle autonome elle-même.</li>
+    <li>Suivez les PR à l'événement.</li>
+    <li>Ouvrez les demandes là où les utilisateurs parlent déjà, et laissez-les arbitrer le produit dans le fil.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="01-charge-cognitive.html">← 1 · Charge cognitive</a><span></span></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application TypeScript et une data platform Python serverless, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience d'octobre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'infrastructure ici.</span>
+</footer>
+</main>
+</body>
+</html>
