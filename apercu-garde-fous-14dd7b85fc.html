@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Garde-fous et identités</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}</script>
+<meta name="description" content="Garde-fous qui regardent la cible, prod en lecture seule, identité propre à l'agent.">
+<link rel="icon" type="image/png" href="img/mark-64.png">
+<link rel="apple-touch-icon" href="img/mark-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] .hint[data-for="initie"],html[data-level="initie"] .hint[data-for="novice"]{display:none}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:1100px){
+  body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;width:270px;margin:0;padding:24px 14px;border-bottom:none;border-right:1px solid var(--rule);overflow-y:auto}
+  .topnav ol{flex-direction:column;white-space:normal;max-width:none;gap:2px;font-size:.88rem}
+  .topnav .brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px}
+}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Modules"><a class="brand" href="index.html"><img src="img/mark-180.png" alt="" width="34" height="34">Humai</a><ol><li><a href="index.html"><img class="fi" src="img/mark-64.png" alt="" width="20" height="20">Sommaire</a></li><li><a href="01-charge-cognitive.html"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20">1 · Charge cognitive</a></li><li><a href="02-boucles.html"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20">2 · Humain sur la boucle</a></li><li><a href="lexique.html"><span class="fi fi-gl" aria-hidden="true">Aa</span>Lexique</a></li></ol></nav>
+<main>
+<header>
+  <p class="apercu"><b>Aperçu</b> Ce module n'est pas encore publié : il n'apparaît pas dans le sommaire et ne se lit que par ce lien.</p>
+  <span class="eyebrow">Module 4 · Sécurité</span>
+  <h1>Garde-fous et identités</h1>
+  <p class="lede">Une compétence dit comment l'<span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> fait les choses, quelle que soit l'intention. Un garde-fou dit ce qu'il ne fera jamais, même convaincu d'avoir raison. Pour cela, on regarde la cible réelle d'une commande plutôt que sa forme, et on rend la main à un humain pour tout ce qui écrit en <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">production</span>.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>Ce qu'aucune intention ne justifie</h2>
+  <p>Les compétences (module <a href="apercu-skills-678e7a02dc.html">3</a>) sont les mêmes quelle que soit la demande. Les garde-fous aussi, mais dans l'autre sens : ils disent ce que l'agent ne fera jamais, quelle que soit l'intention, même bien expliquée, même urgente.</p>
+  <p>Pour tout le reste, on explique l'intention plutôt que d'empiler les interdits : une intention bien expliquée couvre aussi les cas qu'on n'avait pas prévus (module <a href="apercu-skills-678e7a02dc.html">3</a>). Les règles absolues sont réservées à ce qu'on ne peut pas défaire : écrire en production, détruire du travail, se servir d'un accès admin. Elles lisent la cible de la commande, parce qu'un agent sait toujours rendre son intention convaincante.</p>
+  <figure class="diagram"><img src="img/garde-fou-ouverture.png" alt="Une intention s'appuie sur une compétence, qui produit une commande. Le garde-fou résout la cible de la commande : vers le jetable ou le dev, elle passe ; une écriture en production est remise à l'humain." loading="lazy"><figcaption>Bleu : la compétence. Rouge : le garde-fou. Violet : l'humain, appelé seulement pour la prod.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Des garde-fous qui regardent la cible</h2>
+  <p>Les listes d'interdiction par motif (« refuser toute commande qui commence par tel mot ») ne distinguent pas une suppression dans un répertoire de travail jetable d'une suppression dans le dossier personnel, ni un stockage de <span class="gl" tabindex="0" data-def="Selon le contexte : un développeur, ou l'environnement de développement, une copie séparée où l'on teste sans toucher aux clients.">dev</span> d'un stockage de prod. Elles finissent soit trop larges (l'agent est bloqué 100 fois par jour), soit trop étroites.</p>
+  <ul>
+    <li><b>Analysez la commande et résolvez sa cible</b> : chemin réel, compte, environnement. Laissez passer ce qui touche le jetable, refusez le reste.</li>
+    <li><b>Un refus dit quelle forme serait acceptée.</b> L'agent se corrige au lieu de chercher un contournement.</li>
+    <li><b>Le garde-fou a ses propres tests</b>, comme n'importe quel code de sécurité.</li>
+    <li><b>Placez le contrôle là où la commande s'exécute.</b> Lire le texte d'une commande échoue sur les redirections, les <span class="gl" tabindex="0" data-def="Un petit programme qui enchaîne des commandes pour automatiser un geste.">scripts</span> et les variables. Une première version qui lisait ce texte refusait des commandes sans danger et laissait passer celles qui passaient par un script : pour les 2 commandes git qui jettent du travail, un wrapper lit désormais les arguments de git au moment où git les reçoit, et n'accepte que les <span class="gl" tabindex="0" data-def="Un dossier de travail isolé, avec sa propre branche, où un agent avance sans marcher sur les autres.">espaces de travail</span> jetables.</li>
+  </ul>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Un <span class="gl" tabindex="0" data-def="Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.">hook</span> <code>PreToolUse</code> en <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span>, <code>guard-bash</code>, remplace les règles <code>deny</code> de <span class="gl" tabindex="0" data-def="La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.">Claude Code</span> pour <code>rm</code> récursif, les copies S3 et les lectures de <span class="gl" tabindex="0" data-def="Un mot de passe ou une clé d'accès que le code utilise, et qui ne doit jamais apparaître en clair.">secrets</span>. Il accepte un <code>rm -rf</code> dans le worktree, une copie vers un bucket de <span class="gl" tabindex="0" data-def="Selon le contexte : un développeur, ou l'environnement de développement, une copie séparée où l'on teste sans toucher aux clients.">dev</span>, une lecture de secret de dev.</p></div>
+  <div class="trap"><b>Une interdiction qui ne lisait qu'un ordre d'arguments</b><span>Les règles visaient la forme « script, puis environnement ». L'usage du script de <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> documente pourtant l'inverse, l'environnement en premier, et c'est cette forme qui a déployé la prod une fois. Le garde lit maintenant l'environnement comme le script le lit, n'accepte que le dev, refuse ce qu'il ne sait pas résoudre, et suit aussi les scripts lancés par un autre script.</span></div>
+</section>
+
+<section>
+  <h2>La prod : lire librement, écrire jamais</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Règle</th><th>Pourquoi</th></tr></thead>
+    <tbody>
+      <tr><td><b>Lectures prod libres</b> : <span class="gl" tabindex="0" data-def="Le journal qu'écrit un programme pendant qu'il tourne : ce qu'il fait, et ses erreurs.">logs</span>, exécutions, alarmes, requêtes en lecture seule.</td><td>Faire valider chaque lecture par un humain tue la boucle de diagnostic.</td></tr>
+      <tr><td><b>Écritures prod remises à l'humain</b> : l'agent affiche la commande exacte, l'humain la lance, la sortie revient dans la <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span>.</td><td>Un accord donné une fois ne doit pas devenir une autorisation permanente.</td></tr>
+      <tr><td><b>Pas de contournement après un refus</b> : ni sous-shell, ni wrapper, ni variable d'environnement.</td><td>Un agent motivé trouve toujours une reformulation, donc la règle doit l'interdire noir sur blanc.</td></tr>
+      <tr><td><b>Vérifier le compte avant d'agir</b> : toute commande d'infra refuse de continuer si elle se résout vers un autre compte que celui attendu.</td><td>Des identifiants qui traînent dans l'environnement priment souvent sur le profil choisi.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Le préfixe <code>!</code> de Claude Code exécute dans la <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span> une commande tapée par l'humain : c'est le <span class="gl" tabindex="0" data-def="Dans Slack, un espace de discussion consacré à un sujet.">canal</span> de remise. Côté infra, un compte <span class="gl" tabindex="0" data-def="Amazon Web Services : le cloud d'Amazon, qui loue serveurs, bases de données et services à la demande.">AWS</span> de dev séparé de la <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">prod</span> par des SCP, et un wrapper de lecture prod qui assume un rôle limité aux <span class="gl" tabindex="0" data-def="Le journal qu'écrit un programme pendant qu'il tourne : ce qu'il fait, et ses erreurs.">logs</span> et aux exécutions.</p></div>
+  <div class="trap"><b>Ce qui a failli arriver</b><span>Une commande de création d'infra lancée à la main se serait déployée sur le compte de prod, parce que des clés statiques dans le profil shell primaient sur le profil choisi. Depuis, chaque commande vérifie le compte avant toute lecture ou écriture.</span></div>
+</section>
+
+<section>
+  <h2>Une identité par agent, aux droits minimaux</h2>
+  <ul>
+    <li><b>Jamais les identifiants d'une personne.</b> L'agent a son propre rôle : tout ce qu'il fait est tracé sous ce rôle, et le révoquer coupe tout d'un coup.</li>
+    <li><b>Une identité de <span class="gl" tabindex="0" data-def="Un programme qui poste des messages tout seul, par exemple les alertes.">bot</span> sur la <span class="gl" tabindex="0" data-def="Le service qui héberge le code et ses PR, comme GitHub.">forge</span></b>, limitée aux <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> d'un seul <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span>. Elle ne peut pas approuver sa propre PR : la <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span> et la <span class="gl" tabindex="0" data-def="Intégration continue : à chaque PR, une batterie de vérifications automatiques tourne et peut bloquer le merge.">CI</span> s'appliquent comme pour un humain.</li>
+    <li><b>Un environnement jetable par session</b> : la machine sert de bac à sable, et le « <span class="gl" tabindex="0" data-def="Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.">commit</span> et push avant de partir » évite de perdre le travail avec elle.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Sur le poste : le quotidien d'un côté, l'admin de l'autre</h2>
+  <p>Un agent local hérite de tout ce que le shell du développeur peut atteindre : un jeton admin resté dans un trousseau, une variable exportée, un compte aux pleins droits. Il faut donc limiter par construction ce que l'agent peut trouver seul, et exiger un geste humain à chaque usage d'un accès admin.</p>
+  <ul>
+    <li><b>Des identifiants du quotidien aux droits minimaux</b> : les seuls dépôts et opérations nécessaires, une expiration. L'ancien jeton admin est retiré du trousseau, pour que l'agent ne retombe pas dessus.</li>
+    <li><b>Les identifiants admin chiffrés, déverrouillés par biométrie à chaque utilisation</b>, et injectés pour la durée d'une seule commande. Ils ne sont ni écrits dans un fichier d'environnement, ni exportés, ni stockés en clair.</li>
+    <li><b>La <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span> principale protégée côté forge</b> reste la barrière de fond : un jeton restreint ne limite pas ce que git fait par une autre voie.</li>
+  </ul>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Pour <code><span class="gl" tabindex="0" data-def="L'outil en ligne de commande de GitHub : il permet à un script ou à un agent d'interroger GitHub.">gh</span></code>, un fine-grained PAT rattaché à l'organisation : lecture des Actions et des statuts, écriture sur le contenu, les <span class="gl" tabindex="0" data-def="Un ticket qui signale un bug ou demande une évolution, sur GitHub ou dans Sentry.">issues</span> et les <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span>, aucun accès à l'administration, aux secrets, aux variables ni aux webhooks. Il est rangé dans le trousseau macOS, et <code>git</code> reste en SSH. Les accès admin passent par des wrappers (<code>gh-admin</code>, <code>scalingo-admin</code>) qui déchiffrent le secret avec une clé <code>age</code> gardée dans le Secure Enclave, derrière Touch ID.</p></div>
+  <div class="trap"><b>Ce qui n'a pas tenu</b><span>Un second compte aux droits réduits, à basculer à la main selon la tâche. C'était trop pénible au quotidien, et un agent aurait su basculer seul vers le compte complet. Nous avons ensuite retenu des accès du quotidien limités, et l'admin déverrouillé par biométrie à chaque usage.</span></div>
+</section>
+
+<section>
+  <h2>Le coût des permissions</h2>
+  <p>Trop de demandes d'autorisation, et l'humain finit par tout accepter sans lire ou par élargir les droits sans s'en rendre compte. Mesurez-les, autorisez d'office les lectures et les commandes de <span class="gl" tabindex="0" data-def="Une session d'agent planifiée à cadence fixe, avec une consigne écrite une fois.">routine</span>, et gardez les demandes pour ce qui mérite un arbitrage.</p>
+  <div class="trap"><b>Une config ignorée en silence</b><span>2 virgules finales dans un fichier de configuration JSON, et l'outil a écarté le fichier entier sans prévenir, avec toutes les permissions du périmètre, pendant un mois. Valider la configuration en CI coûte 3 lignes.</span></div>
+</section>
+
+<section>
+  <h2>À reprendre</h2>
+  <ol>
+    <li>Remplacez les listes d'interdiction par un contrôle qui résout la cible.</li>
+    <li>Prod en lecture pour l'agent, écritures remises à l'humain avec la commande exacte.</li>
+    <li>Une identité propre à l'agent, révocable d'un geste.</li>
+    <li>Vérifiez le compte avant toute commande d'infra.</li>
+    <li>Sur le poste, des jetons minimaux pour l'agent, l'admin derrière un geste humain à chaque usage.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="apercu-skills-678e7a02dc.html">← 3 · Intentions et compétences</a><span></span></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience d'octobre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'infrastructure ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+})();
+</script>
+</body>
+</html>

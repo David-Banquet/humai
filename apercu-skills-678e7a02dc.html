@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Des intentions qui changent, des compétences qui restent</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}</script>
+<meta name="description" content="Une intention qui change à chaque demande, des compétences écrites une fois à partir des retours qui reviennent, versionnées dans le dépôt.">
+<link rel="icon" type="image/png" href="img/mark-64.png">
+<link rel="apple-touch-icon" href="img/mark-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] .hint[data-for="initie"],html[data-level="initie"] .hint[data-for="novice"]{display:none}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:1100px){
+  body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;width:270px;margin:0;padding:24px 14px;border-bottom:none;border-right:1px solid var(--rule);overflow-y:auto}
+  .topnav ol{flex-direction:column;white-space:normal;max-width:none;gap:2px;font-size:.88rem}
+  .topnav .brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px}
+}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Modules"><a class="brand" href="index.html"><img src="img/mark-180.png" alt="" width="34" height="34">Humai</a><ol><li><a href="index.html"><img class="fi" src="img/mark-64.png" alt="" width="20" height="20">Sommaire</a></li><li><a href="01-charge-cognitive.html"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20">1 · Charge cognitive</a></li><li><a href="02-boucles.html"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20">2 · Humain sur la boucle</a></li><li><a href="lexique.html"><span class="fi fi-gl" aria-hidden="true">Aa</span>Lexique</a></li></ol></nav>
+<main>
+<header>
+  <p class="apercu"><b>Aperçu</b> Ce module n'est pas encore publié : il n'apparaît pas dans le sommaire et ne se lit que par ce lien.</p>
+  <span class="eyebrow">Module 3 · Intentions et compétences</span>
+  <h1>Des intentions qui changent, des compétences qui restent</h1>
+  <p class="lede">Chaque demande faite à un <span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> porte une intention différente. Les gestes pour la mener à bien, eux, sont presque toujours les mêmes : démarrer la tâche, committer, ouvrir la <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span>, déployer. Ces gestes sont des compétences. On les écrit une fois, à partir des retours qui reviennent, on les range dans le <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span>, et elles servent à l'identique pour un humain comme pour un agent autonome, quelle que soit l'intention.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>Le problème de départ</h2>
+  <p>Corriger un email parti à tort, ajouter un indicateur au bilan, diagnostiquer une alerte : chaque demande avait son intention, et pourtant on réexpliquait à l'agent les mêmes choses à chaque fois. Comment démarrer une tâche, comment committer, comment ouvrir une PR, où déployer. Chaque développeur avait réglé son outil sur son poste, hors du dépôt, et les améliorations restaient locales : personne n'apprenait qu'une procédure avait changé. Quant à un agent qui tourne ailleurs que sur le poste, il n'avait rien de tout ça.</p>
+  <p>On a fini par séparer ce qui change d'une demande à l'autre, l'intention, de ce qui ne change pas : les compétences, qui disent comment faire, et les garde-fous (module <a href="apercu-garde-fous-14dd7b85fc.html">4</a>), qui disent ce qu'on ne fait jamais.</p>
+  <figure class="diagram"><img src="img/intention-trio.png" alt="L'intention, ce qu'on veut cette fois-ci, s'appuie sur les compétences, comment on fait toujours, qui s'arrêtent devant les garde-fous, ce qu'on ne fait jamais." loading="lazy"><figcaption>Ce module traite les 2 premiers, les garde-fous ont le leur.</figcaption></figure>
+</section>
+
+<section>
+  <h2>De l'intention à la compétence</h2>
+  <p>On y est arrivé en 4 étapes.</p>
+  <h3>1. L'intention change à chaque demande</h3>
+  <p>Une intention, c'est ce qu'on veut obtenir maintenant, sur ce travail-là. Elle tient en une phrase : « Quand un client en cours d'installation voit ses identifiants refusés, je veux qu'on vérifie avant de suspendre son <span class="gl" tabindex="0" data-def="Le branchement de Wavo sur un logiciel du client (gestion, comptabilité, banque) pour en lire les données.">intégration</span>, pour ne plus lui envoyer d'email à tort. » Elle porte un but, et des critères qui disent quand c'est fini. C'est le gabarit de tâche de notre culture de l'écrit, et c'est le seul texte qu'un humain devrait avoir à écrire pour lancer le travail.</p>
+  <p>Parce que c'est le seul, cette parole doit être impeccable, au sens du premier des <i>Quatre accords toltèques</i> de Don Miguel Ruiz : dire exactement ce qu'on veut dire. Un mot flou (« l'email », « le client », « corrige vite ») laisse plusieurs lectures possibles, et l'agent en choisit une avec aplomb, sans signaler qu'il y en avait d'autres. Le nom exact de l'objet, le cas précis et un critère vérifiable lèvent l'ambiguïté avant la première ligne de code, là où elle coûte le moins cher.</p>
+  <figure class="diagram"><img src="img/intention-etape1.png" alt="L'humain formule 2 intentions : ne plus suspendre un client à tort, ajouter un indicateur au bilan. Chacune a son critère de fin : l'email ne part plus sans vérification, l'indicateur apparaît avec des chiffres vérifiés." loading="lazy"><figcaption>Deux demandes qui n'ont rien en commun, en apparence.</figcaption></figure>
+  <h3>2. Les mêmes gestes reviennent</h3>
+  <p>Posez ces 2 intentions côte à côte et regardez ce qu'elles demandent vraiment. Le but diffère, le chemin est le même : démarrer la tâche sur sa <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span>, committer, ouvrir la PR et la suivre jusqu'au <span class="gl" tabindex="0" data-def="Intégrer une PR relue dans la version principale du code. Après le merge, la modification part vers la production.">merge</span>, déployer, vérifier. Ils tiennent à la façon dont l'équipe travaille, quel que soit le but.</p>
+  <p>Une compétence, c'est l'un de ces gestes écrit une fois : ses étapes, ses règles, les pièges déjà rencontrés. On la range dans un <span class="gl" tabindex="0" data-def="Une procédure écrite une fois, que l'agent réutilise : les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan.">skill</span>, une procédure que l'agent charge quand il en a besoin, quelle que soit l'intention qui l'y amène.</p>
+  <figure class="diagram"><img src="img/intention-etape2.png" alt="Les 2 intentions passent par la même suite de compétences : démarrer la tâche, committer, ouvrir et suivre la PR, déployer et vérifier." loading="lazy"><figcaption>Orange : ce qui change. Bleu : ce qui reste.</figcaption></figure>
+  <h3>3. Une compétence ne coûte plus d'attention</h3>
+  <p>La pédagogie a un nom pour ce mécanisme. La <a href="https://doi.org/10.1207/s15516709cog1202_4">théorie de la charge cognitive</a>, formulée par le psychologue John Sweller en 1988, part d'un constat : la mémoire de travail ne manipule que quelques éléments à la fois. Le débutant qui résout un problème y entasse tout, la procédure comme le problème. L'expert a automatisé la procédure en un « schéma » rangé en mémoire à long terme : elle ne lui coûte presque plus rien, et sa mémoire de travail reste libre pour ce qui est nouveau. Pour Sweller, c'est le but même de l'enseignement : construire ces schémas, puis les automatiser.</p>
+  <p>Un agent fonctionne de la même façon, avec son contexte à la place de la mémoire de travail. Sans skill, il redéduit la procédure à chaque <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span>, et cette déduction occupe son contexte et l'attention de celui qui relit. Avec un skill, la procédure tient en une ligne de description jusqu'au moment où elle sert. Le contexte reste à l'intention, la seule partie qui change. C'est la même économie que pour l'attention humaine (module <a href="01-charge-cognitive.html">1</a>).</p>
+  <figure class="diagram"><img src="img/intention-etape3.png" alt="2 barres de même longueur représentent tout le contexte d'une session. Sans compétence, la procédure redéduite en occupe près des deux tiers et l'intention le reste. Avec une compétence, la procédure tient en une ligne et l'intention prend presque toute la place." loading="lazy"><figcaption>Un schéma, pas une mesure : l'ordre de grandeur varie d'une tâche à l'autre.</figcaption></figure>
+  <h3>4. La rétroaction fait naître les compétences</h3>
+  <p>Une compétence ne s'écrit pas à l'avance, sur une liste de bonnes pratiques. Elle naît d'un retour qui revient. La <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span> remonte la même remarque sur 3 PR qui n'ont rien à voir, un <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> se trompe 2 fois de la même façon : ce retour ne dépendait d'aucune intention, il devient une compétence, chargée avant d'écrire plutôt que corrigée après. Un retour isolé, lui, se corrige une fois et s'oublie.</p>
+  <p>La botanique connaît cette boucle. Une plante qu'on fléchit régulièrement, par le vent ou à la main, pousse moins haut et épaissit sa tige : c'est la <a href="https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2015.00266/full">thigmomorphogenèse</a>, nommée par le physiologiste Mark Jaffe en 1973. Dans ses expériences, frotter la tige quelques secondes, 1 ou 2 fois par jour, suffisait à freiner sa croissance en hauteur. La contrainte qui revient finit inscrite dans la structure de la plante, comme le retour qui revient finit inscrit dans les compétences de l'équipe.</p>
+  <figure class="diagram"><img src="img/intention-etape4.png" alt="Une intention donne un travail, la PR, qui reçoit un retour de revue. Si ce retour revient d'une demande à l'autre, il devient une compétence chargée avant d'écrire, dont la demande suivante profite. Sinon, il est corrigé une fois." loading="lazy"><figcaption>La boucle se referme sur la demande suivante, quelle qu'elle soit.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Parler à l'agent comme à un collègue</h2>
+  <p>Une intention se dit comme on la dirait à un collègue : naturellement, avec ce qu'on veut et pourquoi on le veut. On a tous été tentés par l'inverse, le <span class="gl" tabindex="0" data-def="Le texte de consigne donné à une IA.">prompt</span> surconstruit, avec un rôle à endosser, une liste de cas et des TOUJOURS et des JAMAIS en majuscules. Il est long à écrire, au point qu'on repousse la demande, et il ne vaut que pour les cas qu'on a pensé à lister. Un collègue qui recevrait une telle note s'en étonnerait. Un <span class="gl" tabindex="0" data-def="Le moteur d'une IA : un programme entraîné sur d'immenses quantités de texte, qui produit la suite la plus probable d'une conversation. Opus et Fable sont des modèles de Claude.">modèle</span> récent, lui, l'applique à la lettre, y compris là où elle n'a pas été pensée.</p>
+  <p>Parler naturellement ne veut pas dire parler vague : le ton est celui d'une conversation, le sens reste impeccable. La phrase porte le but, la raison et le critère de fin, comme à l'étape 1, et l'agent trouve le reste dans les compétences. Elle peut même se dicter : l'agent retire les hésitations de l'oral et garde l'intention (module <a href="01-charge-cognitive.html">1</a>).</p>
+  <figure class="diagram"><img src="img/intention-collegue.png" alt="Un prompt surconstruit, avec un rôle, des cas listés et des TOUJOURS et JAMAIS, finit appliqué hors de son cas et muet sur le cas imprévu. Une demande naturelle, qui dit ce qu'on veut et pourquoi, laisse l'agent juger le cas qu'on n'avait pas prévu." loading="lazy"><figcaption>Rouge : la consigne qui déborde. Bleu : le jugement de l'agent.</figcaption></figure>
+  <h3>Enseigner des règles de jugement</h3>
+  <p>Ce qui vaut pour une demande vaut pour les instructions permanentes, celles des fichiers d'instructions de projet et des skills. On y enseigne des règles de jugement, comme on formerait un collègue, plutôt que des instructions précises à exécuter. Les modèles récents suivent les consignes à la lettre : une règle absolue, écrite en majuscules et répétée 3 fois, finit appliquée hors de son cas, et une liste de cas finit toujours par en oublier un. Une intention bien expliquée couvre aussi les cas qu'on n'avait pas prévus.</p>
+  <p>Le <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices">guide de prompting d'Anthropic</a> pour ses modèles récents va dans ce sens. Il conseille d'expliquer pourquoi une consigne compte, et de remplacer « CRITICAL: You MUST use this tool when... » par un simple « Use this tool when... » : ces modèles réagissent davantage aux instructions, et le ton appuyé les fait déclencher à tort.</p>
+  <ul>
+    <li><b>Dire pourquoi.</b> Le contexte et la raison d'une consigne permettent au modèle de reconnaître le cas qui ressemble sans être identique, et celui qui ressemble sans être concerné.</li>
+    <li><b>Donner le compromis, pas seulement la règle.</b> « Préférer X, sauf quand Y coûte plus cher » laisse le modèle trancher ; « toujours X » le force à se tromper le jour où Y arrive.</li>
+    <li><b>Garder l'absolu pour l'irréversible.</b> Une écriture en <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">prod</span>, une suppression, un <span class="gl" tabindex="0" data-def="Un mot de passe ou une clé d'accès que le code utilise, et qui ne doit jamais apparaître en clair.">secret</span> : là, une interdiction nette et un garde-fou exécutable (module <a href="apercu-garde-fous-14dd7b85fc.html">4</a>). Partout ailleurs, du jugement.</li>
+    <li><b>Une consigne qui ne change rien se retire.</b> Si le modèle le fait déjà de lui-même, la ligne coûte du contexte à chaque tour sans rien apporter.</li>
+  </ul>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Nos fichiers <code>CLAUDE.md</code> sont écrits en prose, et chaque règle y vient avec sa raison. « Toute décision qui revient à l'humain passe par un formulaire » est suivi de son pourquoi : une liste de questions en fin de message se perd quand la réponse est longue, et oblige à répondre en rédigeant. Fin septembre, au passage à la génération <span class="gl" tabindex="0" data-def="L'IA conçue par la société Anthropic.">Claude</span> 5, nous avons réécrit ces fichiers dans cet esprit, et retiré au passage les commandes, chemins et tables cités qui n'existaient plus, chacun vérifié contre le code.</p></div>
+</section>
+
+<section>
+  <h2>Les briques du harnais</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Brique</th><th>Ce qu'elle porte</th><th>Règle d'écriture</th></tr></thead>
+    <tbody>
+      <tr><td>Instructions de projet</td><td>Ce qui ne se voit pas dans le code et qui a déjà mordu.</td><td>Court, par zone du code. Pas de redite de ce que le code ou l'historique disent déjà.</td></tr>
+      <tr><td>Procédures (skills)</td><td>Un chemin critique écrit une fois : démarrer une tâche, committer, piloter une PR, déployer, diagnostiquer.</td><td>Une description qui dit quand s'en servir. Les sessions autonomes sont obligées de passer par elle.</td></tr>
+      <tr><td>Règles ciblées</td><td>Des contrats chargés seulement quand on touche certains chemins.</td><td>Liées à un motif de fichiers, pour ne pas polluer le contexte.</td></tr>
+      <tr><td>Permissions et <span class="gl" tabindex="0" data-def="Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.">hooks</span></td><td>Ce que l'agent peut faire sans demander, et les garde-fous (module <a href="apercu-garde-fous-14dd7b85fc.html">4</a>).</td><td>Autonomes par périmètre, validés en <span class="gl" tabindex="0" data-def="Intégration continue : à chaque PR, une batterie de vérifications automatiques tourne et peut bloquer le merge.">CI</span>.</td></tr>
+      <tr><td>Connecteurs</td><td>Les outils externes disponibles dans le périmètre.</td><td>Restreints au périmètre : pas d'accès à la base analytique dans une session applicative.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Une quarantaine de <span class="gl" tabindex="0" data-def="Une procédure écrite une fois, que l'agent réutilise : les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan.">skills</span> <span class="gl" tabindex="0" data-def="La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.">Claude Code</span> dans le monorepo : une douzaine partagés à la racine (<span class="gl" tabindex="0" data-def="Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.">commit</span>, cycle de vie d'une <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span>, démarrage d'une tâche, rédaction de tickets, plan relu en ligne, création de skills), une quinzaine propres à l'app (événements de domaine, commandes, routes, glossaire métier, tâches de fond), une dizaine propres à la <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> (déployer, lancer un <span class="gl" tabindex="0" data-def="Un enchaînement d'étapes automatiques, lancé par un événement ou à heure fixe.">workflow</span>, smoke test, surveiller, diagnostiquer). Plus des skills d'écriture hors <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span> : retirer les tics d'écriture IA, formater pour <span class="gl" tabindex="0" data-def="La messagerie de l'équipe : des canaux par sujet, et des fils de discussion sous chaque message.">Slack</span>, vulgariser un incident.</p></div>
+</section>
+
+<section>
+  <h2>Ce qui marche</h2>
+  <ul>
+    <li><b>Un skill par chemin critique, et un seul chemin.</b> Une PR qui peut s'ouvrir de 3 façons donnera 3 comportements.</li>
+    <li><b>Le même harnais partout.</b> La <span class="gl" tabindex="0" data-def="Une machine créée pour une seule session puis détruite : ce que l'agent y casse ne touche rien d'autre.">machine jetable</span> d'un agent charge exactement la même configuration que le poste du développeur : une amélioration profite aux deux.</li>
+    <li><b>Mesurer qu'un skill aide.</b> On note et on compare plusieurs exécutions avec et sans le skill, car une modification qui « a l'air mieux » ne l'est pas toujours.</li>
+    <li><b>Un skill qu'il faut penser à appeler finit oublié.</b> Un hook qui lit la demande peut le charger de lui-même, par exemple un skill de style dès qu'on rédige pour la messagerie. Une détection par motifs laisse quand même passer certaines formulations.</li>
+    <li><b>Auditer les instructions quand le modèle change.</b> Une consigne écrite pour le modèle précédent vieillit en silence : une commande, un chemin ou une cible cités qui n'existent plus, une façon de forcer un appel d'outil que le nouveau modèle refuse. Chaque affirmation de l'audit se vérifie contre le code avant d'être appliquée.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Un contexte propre</h2>
+  <p>Plus le contexte d'une session grossit, plus l'agent se disperse : il oublie une consigne du début, mélange des pistes déjà abandonnées, et chaque tour coûte plus cher. Disposer d'une grande fenêtre de contexte ne justifie pas de la remplir.</p>
+  <ul>
+    <li><b>Compacter bien avant la limite</b>, et parfois repartir d'une session neuve plutôt que de compacter.</li>
+    <li><b>Déléguer les lectures larges</b> à des agents qui ne rendent que leur conclusion.</li>
+    <li><b>Voir venir la limite</b> : le remplissage du contexte et les quotas d'usage affichés en permanence, pour ne pas être coupé au milieu d'une tâche.</li>
+    <li><b>Une PR suivante, une session suivante.</b> La session qui termine la première écrit la tâche de la suivante pendant qu'elle a tout le contexte. Cette tâche démarre dans son propre espace, sur une branche empilée sur la précédente pour éviter les conflits.</li>
+  </ul>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p><span class="gl" tabindex="0" data-def="Un modèle de Claude, rapide et capable, qui fait ici le gros du travail.">Opus</span> avec la fenêtre d'un million de tokens, et l'autocompaction réglée vers 400 000 (<code>autoCompactWindow</code>). Une statusline d'une cinquantaine de lignes de shell affiche <span class="gl" tabindex="0" data-def="Le moteur d'une IA : un programme entraîné sur d'immenses quantités de texte, qui produit la suite la plus probable d'une conversation. Opus et Fable sont des modèles de Claude.">modèle</span>, dépôt, <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span>, contexte et quotas sur 5 h et 7 jours. Pour la PR suivante, <code><span class="gl" tabindex="0" data-def="Le skill qui démarre une tâche : il la crée sous sa feature, crée sa branche et ouvre un workspace avec un agent qui connaît déjà la tâche.">odette-start-task</span></code> lancé depuis la <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span> de la première.</p></div>
+</section>
+
+<section>
+  <h2>Faire circuler les changements</h2>
+  <p>Versionner le harnais ne sert pas à grand-chose si personne ne sait qu'il a bougé.</p>
+  <ul>
+    <li>Des notes de version hebdomadaires des tâches d'outillage livrées. <span class="status s-wip">en cours</span></li>
+    <li>Chaque développeur relit le diff de sa configuration locale de la semaine et propose ce qui mérite d'être partagé. <span class="status s-wip">en cours</span></li>
+    <li>Un <span class="gl" tabindex="0" data-def="Dans Slack, un espace de discussion consacré à un sujet.">canal</span> réservé aux astuces, une par message, discutée en <span class="gl" tabindex="0" data-def="Sous un message Slack, la suite de réponses qui en discutent, sans encombrer le canal.">fil</span>. Celles que l'équipe adopte migrent dans le dépôt. <span class="status s-done">en place</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2>À reprendre</h2>
+  <ol>
+    <li>Écrivez l'intention en une phrase, avec son but et ses critères de fin : c'est la seule partie qui change.</li>
+    <li>Parlez à l'agent comme à un collègue, et écrivez ses instructions en règles de jugement, avec leur raison.</li>
+    <li>Faites une compétence de chaque geste qui revient d'une intention à l'autre, et de chaque retour de revue qui se répète.</li>
+    <li>Mettez la configuration de l'agent dans le dépôt, relue en PR.</li>
+    <li>Un skill par opération critique, et obligez les sessions autonomes à l'utiliser.</li>
+    <li>Testez un skill avec et sans, sur plusieurs exécutions.</li>
+    <li>Compactez tôt, et ouvrez une session neuve pour la tâche suivante.</li>
+    <li>Annoncez les changements de harnais comme des changements de produit.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="index.html">← Sommaire</a><a href="apercu-garde-fous-14dd7b85fc.html">4 · Garde-fous →</a></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience d'octobre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'infrastructure ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+})();
+</script>
+</body>
+</html>
