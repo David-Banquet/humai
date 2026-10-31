@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lexique</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}</script>
+<meta name="description" content="Les termes techniques du dossier Humai, expliqués pour qui ne lit pas de code.">
+<link rel="icon" type="image/png" href="img/mark-64.png">
+<link rel="apple-touch-icon" href="img/mark-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.illus{background:#FBF7EC;padding:0 0 10px}.illus img{border-radius:6px 6px 0 0}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram:not(.illus) img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] .hint[data-for="initie"],html[data-level="initie"] .hint[data-for="novice"]{display:none}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:1100px){
+  body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;width:270px;margin:0;padding:24px 14px;border-bottom:none;border-right:1px solid var(--rule);overflow-y:auto}
+  .topnav ol{flex-direction:column;white-space:normal;max-width:none;gap:2px;font-size:.88rem}
+  .topnav .brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px}
+}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+.sub{position:fixed;right:16px;bottom:16px;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 28px rgba(21,39,46,.18);display:flex;flex-direction:column;gap:8px;transform:translateY(12px);opacity:0;transition:transform .25s,opacity .25s}
+.sub.on{transform:none;opacity:1}
+.sub b{font:600 1.05rem var(--display)}
+.sub p{margin:0;font-size:.88rem;color:var(--muted)}
+.sub form{display:flex;gap:6px;flex-wrap:wrap}
+.sub input{flex:1 1 160px;min-width:0;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--ground);color:var(--ink)}
+.sub button[type=submit]{font:600 .9rem var(--body);padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--surface);cursor:pointer}
+.sub .x{position:absolute;top:6px;right:8px;border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px}
+.sub :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Modules"><a class="brand" href="index.html"><img src="img/mark-180.png" alt="" width="34" height="34">Humai</a><ol><li><a href="index.html"><img class="fi" src="img/mark-64.png" alt="" width="20" height="20">Sommaire</a></li><li><a href="01-charge-cognitive.html"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20">1 · Charge cognitive</a></li><li><a href="02-boucles.html"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20">2 · Humain sur la boucle</a></li><li><a href="03-skills.html"><img class="fi" src="img/modules/skills.png" alt="" width="20" height="20">3 · Intentions et compétences</a></li><li><a href="04-harnais.html"><img class="fi" src="img/modules/harnais.png" alt="" width="20" height="20">4 · Harnais</a></li><li><a href="05-garde-fous.html"><img class="fi" src="img/modules/garde-fous.png" alt="" width="20" height="20">5 · Garde-fous</a></li><li><a href="lexique.html" aria-current="page"><span class="fi fi-gl" aria-hidden="true">Aa</span>Lexique</a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Lexique · les mots du dossier</span>
+  <h1>Lexique</h1>
+  <p class="lede">Les mots techniques du dossier, expliqués pour qui ne lit pas de code. Dans les modules, ils sont soulignés en pointillés : la définition s'affiche au survol, ou au toucher sur téléphone.</p>
+</header>
+<section>
+  <dl class="glossary">
+    <dt id="advisormodel">advisorModel</dt><dd>Un réglage de Claude Code : un second modèle, plus fort, que l'agent consulte pour avis avant de s'engager et avant de rendre son travail.</dd>
+    <dt id="agent">Agent</dt><dd>Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.</dd>
+    <dt id="application-typescript">Application TypeScript</dt><dd>TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.</dd>
+    <dt id="askuserquestion">AskUserQuestion</dt><dd>L'outil de Claude Code qui pose une question à l'humain sous forme de formulaire : quelques options, et on répond d'un clic.</dd>
+    <dt id="atrophie">Atrophie</dt><dd>Le déclin d'une capacité qu'on n'exerce plus, comme un muscle qu'on ne fait plus travailler.</dd>
+    <dt id="auto">-auto</dt><dd>Une option de la commande @Odette : l'agent va seul jusqu'à la PR.</dd>
+    <dt id="aws">AWS</dt><dd>Amazon Web Services : le cloud d'Amazon, qui loue serveurs, bases de données et services à la demande.</dd>
+    <dt id="backlog">Backlog</dt><dd>La liste des tâches créées, mais pas encore démarrées.</dd>
+    <dt id="bot">Bot</dt><dd>Un programme qui poste des messages tout seul, par exemple les alertes.</dd>
+    <dt id="brain-rot">Brain rot</dt><dd>« Pourrissement du cerveau » : le mot de l'année 2024 du dictionnaire d'Oxford, pour l'abrutissement attribué au défilement sans fin des contenus en ligne.</dd>
+    <dt id="branche">Branche</dt><dd>Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.</dd>
+    <dt id="bucket">Bucket</dt><dd>Un espace de stockage de fichiers dans le cloud, comme un grand dossier en ligne, avec ses propres droits d'accès.</dd>
+    <dt id="buffer">Buffer</dt><dd>Une file d'attente : ici, les tâches en cours qui attendent d'être reprises.</dd>
+    <dt id="bug-fix">bug-fix</dt><dd>La commande @Odette pour un bug : la tâche est créée, et un agent prépare le correctif.</dd>
+    <dt id="burn-out">Burn-out</dt><dd>Un épuisement professionnel, physique et mental, causé par une surcharge qui dure.</dd>
+    <dt id="canal">Canal</dt><dd>Dans Slack, un espace de discussion consacré à un sujet.</dd>
+    <dt id="cas-limite">Cas limite</dt><dd>Une situation rare, en bordure de ce qui était prévu, qu'aucun test n'avait couverte.</dd>
+    <dt id="cause-racine">Cause racine</dt><dd>La cause première d'une panne, celle qui, corrigée, l'empêche de revenir, par opposition à ses symptômes.</dd>
+    <dt id="cd">CD</dt><dd>Déploiement continu : après le merge, la modification part automatiquement en production.</dd>
+    <dt id="charge-cognitive">Charge cognitive</dt><dd>L'effort mental que demande une tâche. L'attention disponible est limitée : ce qui la consomme pour rien en retire à ce qui compte.</dd>
+    <dt id="chat">Chat</dt><dd>Une conversation écrite avec une IA, question après réponse, comme dans une messagerie.</dd>
+    <dt id="checks">Checks</dt><dd>Les vérifications automatiques qui tournent sur une PR (tests, analyses de sécurité) ; chacune passe au vert ou au rouge.</dd>
+    <dt id="ci">CI</dt><dd>Intégration continue : à chaque PR, une batterie de vérifications automatiques tourne et peut bloquer le merge.</dd>
+    <dt id="claude">Claude</dt><dd>L'IA conçue par la société Anthropic.</dd>
+    <dt id="claude-code">Claude Code</dt><dd>La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.</dd>
+    <dt id="claude-tag">Claude Tag</dt><dd>Claude dans Slack : on le mentionne dans un message, et il lance une session pour traiter la demande.</dd>
+    <dt id="cloud">Cloud</dt><dd>Des serveurs et des services loués à la demande chez un hébergeur, au lieu de machines à soi.</dd>
+    <dt id="commit">Commit</dt><dd>Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.</dd>
+    <dt id="controle-deterministe">Contrôle déterministe</dt><dd>Une vérification faite par un programme fixe, qui donne toujours la même réponse pour la même situation, sans IA.</dd>
+    <dt id="controle-inferentiel">Contrôle inférentiel</dt><dd>Une vérification confiée à un modèle d'IA, qui juge comme le ferait un relecteur : plus lente et moins prévisible qu'un contrôle déterministe, mais seule capable de dire si un changement a du sens.</dd>
+    <dt id="criteres-d-acceptation">Critères d'acceptation</dt><dd>Les conditions vérifiables qui disent qu'une tâche est finie.</dd>
+    <dt id="cron">Cron</dt><dd>Un réglage qui lance un programme tout seul à cadence fixe : chaque jour à 9 h, chaque lundi.</dd>
+    <dt id="d2">D2</dt><dd>Un langage pour décrire un schéma en texte ; un outil le dessine ensuite.</dd>
+    <dt id="data-platform">Data platform</dt><dd>La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.</dd>
+    <dt id="deny">Deny</dt><dd>« Refuser » en anglais : dans les réglages de Claude Code, une règle qui interdit à l'agent une commande précise, par exemple toute suppression de fichiers.</dd>
+    <dt id="dependances">Dépendances</dt><dd>Les briques de code écrites par d'autres, que le projet réutilise. Une faille dans l'une d'elles devient une faille du projet.</dd>
+    <dt id="deploiement">Déploiement</dt><dd>Le moment où une modification arrive dans la version qu'utilisent réellement les clients.</dd>
+    <dt id="depot">Dépôt</dt><dd>L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.</dd>
+    <dt id="detections-de-securite">Détections de sécurité</dt><dd>Les alertes levées par les services de sécurité d'AWS quand ils repèrent un comportement suspect : un accès inhabituel, un port ouvert, une configuration risquée.</dd>
+    <dt id="dette-cognitive">Dette cognitive</dt><dd>L'effort de réflexion qu'on s'est épargné en le déléguant à une IA, et qu'on finit par payer : on comprend et on retient moins ce qu'on a produit.</dd>
+    <dt id="dev">Dev</dt><dd>Selon le contexte : un développeur, ou l'environnement de développement, une copie séparée où l'on teste sans toucher aux clients.</dd>
+    <dt id="diff">Diff</dt><dd>La liste des lignes ajoutées, retirées ou modifiées par un changement : c'est ce qu'on lit pour relire une PR.</dd>
+    <dt id="dynamodb">DynamoDB</dt><dd>Une base de données d'AWS ; ici, elle sert de verrou partagé entre les sessions.</dd>
+    <dt id="ecs">ECS</dt><dd>Un service d'AWS qui fait tourner des programmes en continu.</dd>
+    <dt id="fable">Fable</dt><dd>Le modèle de Claude le plus puissant, plus cher par appel : ici, il conseille plutôt qu'il n'exécute.</dd>
+    <dt id="feature">Feature</dt><dd>Une fonctionnalité, ou un chantier : un ensemble de tâches qui apportent ensemble une même valeur à l'utilisateur.</dd>
+    <dt id="fil">Fil</dt><dd>Sous un message Slack, la suite de réponses qui en discutent, sans encombrer le canal.</dd>
+    <dt id="forge">Forge</dt><dd>Le service qui héberge le code et ses PR, comme GitHub.</dd>
+    <dt id="gh">gh</dt><dd>L'outil en ligne de commande de GitHub : il permet à un script ou à un agent d'interroger GitHub.</dd>
+    <dt id="git">Git</dt><dd>L'outil qui enregistre l'historique du code : il crée les commits et les branches, et les envoie au dépôt.</dd>
+    <dt id="github">GitHub</dt><dd>Le service en ligne qui héberge le code et ses PR, et sur lequel tournent les vérifications automatiques.</dd>
+    <dt id="github-pr">github-pr</dt><dd>Le skill qui ouvre une PR, puis la suit jusqu'au merge : vérifications, relecture, corrections.</dd>
+    <dt id="handoff-session">handoff-session</dt><dd>Un skill qui confie une session locale à une machine jetable, avec une note de passation : l'objectif, les décisions, ce qui est fait et ce qui reste.</dd>
+    <dt id="hook">Hook</dt><dd>Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.</dd>
+    <dt id="hook-de-type-agent">Hook de type agent</dt><dd>Un hook qui, au lieu d'un script fixe, confie la vérification à un modèle : il va regarder l'état réel et juge si l'objectif est atteint.</dd>
+    <dt id="hook-stop">Hook Stop</dt><dd>Le hook qui se déclenche quand l'agent veut rendre la main : il peut le renvoyer au travail si l'objectif n'est pas atteint.</dd>
+    <dt id="infrastructure">Infrastructure</dt><dd>Les machines, réseaux, bases de données et services sur lesquels tourne le code, souvent décrits eux-mêmes dans du code.</dd>
+    <dt id="integration">Intégration</dt><dd>Le branchement de Wavo sur un logiciel du client (gestion, comptabilité, banque) pour en lire les données.</dd>
+    <dt id="issue">Issue</dt><dd>Un ticket qui signale un bug ou demande une évolution, sur GitHub ou dans Sentry.</dd>
+    <dt id="job">Job</dt><dd>Un traitement automatique qui tourne seul, par exemple chaque nuit, pour récupérer ou transformer des données.</dd>
+    <dt id="job-story">job-story</dt><dd>Une manière d'écrire un besoin : « quand..., je veux..., pour... ». Taguer @Odette job-story dans un fil Slack en fait une tâche.</dd>
+    <dt id="joker">Joker</dt><dd>Un caractère, souvent l'étoile *, qui remplace n'importe quelle suite de caractères dans une règle : « git push * » couvre tous les push, quels que soient leurs arguments.</dd>
+    <dt id="json">JSON</dt><dd>Un format de fichier texte très répandu pour écrire des réglages ou échanger des données, fait d'accolades, de guillemets et de virgules. Une virgule de trop suffit à le rendre illisible pour l'outil qui le lit.</dd>
+    <dt id="ligne-goal">Ligne Goal:</dt><dd>La dernière ligne d'une demande, qui décrit l'état à atteindre, par exemple « la PR existe et est liée à la tâche ». Un contrôle vérifie cet état avant de laisser l'agent s'arrêter.</dd>
+    <dt id="linter">Linter</dt><dd>Un outil qui relit le code sans l'exécuter, à la recherche d'erreurs fréquentes et d'écarts aux conventions de l'équipe.</dd>
+    <dt id="log">Log</dt><dd>Le journal qu'écrit un programme pendant qu'il tourne : ce qu'il fait, et ses erreurs.</dd>
+    <dt id="loop">/loop</dt><dd>Une commande de Claude Code qui fait tourner une même tâche en continu, par exemple pour suivre une PR jusqu'au bout.</dd>
+    <dt id="machine-jetable">Machine jetable</dt><dd>Une machine créée pour une seule session puis détruite : ce que l'agent y casse ne touche rien d'autre.</dd>
+    <dt id="mcp">MCP</dt><dd>Model Context Protocol : un standard qui permet à une IA d'utiliser un outil extérieur, ici notre outil de pilotage, comme s'il faisait partie d'elle.</dd>
+    <dt id="merge">Merge</dt><dd>Intégrer une PR relue dans la version principale du code. Après le merge, la modification part vers la production.</dd>
+    <dt id="meta-boucle">Méta-boucle</dt><dd>La boucle qui améliore les autres boucles : ce qui frotte dans le travail des agents devient une règle ou un outil, puis on mesure si ça va mieux.</dd>
+    <dt id="microvm">MicroVM</dt><dd>Une petite machine virtuelle, créée en quelques instants et jetée après usage : l'agent y travaille isolé du reste.</dd>
+    <dt id="migration-de-schema">Migration de schéma</dt><dd>Un changement de la structure d'une base de données, comme ajouter une colonne, à appliquer sans perdre ni casser les données.</dd>
+    <dt id="mit-media-lab">MIT Media Lab</dt><dd>Un laboratoire de recherche du MIT, l'université américaine, qui étudie les usages des technologies.</dd>
+    <dt id="modele">Modèle</dt><dd>Le moteur d'une IA : un programme entraîné sur d'immenses quantités de texte, qui produit la suite la plus probable d'une conversation. Opus et Fable sont des modèles de Claude.</dd>
+    <dt id="monitor">Monitor</dt><dd>Un outil de Claude Code qui surveille un flux d'événements et réveille l'agent à chacun, au lieu de le faire vérifier à intervalle fixe.</dd>
+    <dt id="odette">Odette</dt><dd>Notre outil interne de pilotage : on y écrit les features, les plans et les tâches, et on peut l'appeler depuis Slack.</dd>
+    <dt id="odette-split-plan">odette-split-plan</dt><dd>Le skill qui découpe le plan validé d'une feature en tâches, toutes au même gabarit.</dd>
+    <dt id="odette-start-task">odette-start-task</dt><dd>Le skill qui démarre une tâche : il la crée sous sa feature, crée sa branche et ouvre un workspace avec un agent qui connaît déjà la tâche.</dd>
+    <dt id="onboarding">Onboarding</dt><dd>L'installation d'un nouveau client : paramétrage, branchement de ses outils, premiers imports de données.</dd>
+    <dt id="ops">Ops</dt><dd>Les opérations : l'équipe qui fait tourner l'activité au quotidien (installation et suivi des clients, traitement des alertes), sans écrire le code.</dd>
+    <dt id="opus">Opus</dt><dd>Un modèle de Claude, rapide et capable, qui fait ici le gros du travail.</dd>
+    <dt id="orchestrateur">Orchestrateur</dt><dd>Le programme qui reçoit les demandes et lance les sessions d'agents.</dd>
+    <dt id="pare-feu">Pare-feu</dt><dd>Un filtre placé devant l'application, qui bloque le trafic suspect avant qu'il l'atteigne.</dd>
+    <dt id="port">Port</dt><dd>Une porte d'entrée réseau d'une machine. Un port resté ouvert sur internet peut laisser entrer n'importe qui.</dd>
+    <dt id="post-merge">Post-merge</dt><dd>Ce qui se fait après le merge d'une PR : une migration à lancer, une vérification en production.</dd>
+    <dt id="pr">PR</dt><dd>Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.</dd>
+    <dt id="pr-draft">PR draft</dt><dd>Une PR en brouillon : visible de tous, mais signalée comme pas encore prête à être mergée.</dd>
+    <dt id="prd">PRD</dt><dd>Product Requirements Document : le document qui décrit ce qu'un produit ou une fonctionnalité doit faire, et pourquoi.</dd>
+    <dt id="prd-interview">prd-interview</dt><dd>Un skill qui spécifie une fonctionnalité en interrogeant l'humain, une question à la fois, puis rédige le document de spécification (le PRD).</dd>
+    <dt id="production">Production</dt><dd>La version en service, celle qu'utilisent les clients, par opposition aux copies de test.</dd>
+    <dt id="profil-shell">Profil shell</dt><dd>Le fichier de réglages que le shell lit à chaque ouverture du terminal. Une clé d'accès qu'on y range s'applique ensuite à toutes les commandes, même quand on croit en avoir choisi une autre.</dd>
+    <dt id="prompt">Prompt</dt><dd>Le texte de consigne donné à une IA.</dd>
+    <dt id="prompting">Prompting</dt><dd>L'art d'écrire les consignes données à une IA pour obtenir ce qu'on attend d'elle.</dd>
+    <dt id="python">Python</dt><dd>Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.</dd>
+    <dt id="redrive">Redrive</dt><dd>Relancer une exécution qui a échoué, à partir de l'étape en échec.</dd>
+    <dt id="resume-session">resume-session</dt><dd>Un skill qui rouvre sur l'ordinateur d'un humain une session commencée sur une machine jetable, pour reprendre la main.</dd>
+    <dt id="revue">Revue</dt><dd>La relecture d'une PR, par un humain ou par un agent, avant le merge.</dd>
+    <dt id="routine">Routine</dt><dd>Une session d'agent planifiée à cadence fixe, avec une consigne écrite une fois.</dd>
+    <dt id="s3">S3</dt><dd>Le service de stockage de fichiers d'AWS, où les fichiers sont rangés dans des buckets.</dd>
+    <dt id="scanner">Scanner</dt><dd>Un outil qui analyse automatiquement le code ou ses dépendances à la recherche de failles connues.</dd>
+    <dt id="scopee">Scopée</dt><dd>Limitée à un périmètre précis, écrit à l'avance : ce que la tâche couvre, et ce qu'elle ne couvre pas.</dd>
+    <dt id="script">Script</dt><dd>Un petit programme qui enchaîne des commandes pour automatiser un geste.</dd>
+    <dt id="sdk">SDK</dt><dd>Software Development Kit : une boîte à outils fournie par un service pour le piloter depuis du code, sans passer par des commandes tapées.</dd>
+    <dt id="secret">Secret</dt><dd>Un mot de passe ou une clé d'accès que le code utilise, et qui ne doit jamais apparaître en clair.</dd>
+    <dt id="sentry">Sentry</dt><dd>Un service qui collecte les erreurs du code en production et les regroupe en issues.</dd>
+    <dt id="serverless">Serverless</dt><dd>Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.</dd>
+    <dt id="session">Session</dt><dd>Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.</dd>
+    <dt id="shell">Shell</dt><dd>Le programme du terminal qui lit les commandes tapées au clavier et les exécute. Un agent de code passe par lui pour agir sur la machine.</dd>
+    <dt id="ship-task">ship-task</dt><dd>Le skill qui mène une tâche de bout en bout : il crée sa branche, écrit le plan, code, lance les vérifications, ouvre la PR par github-pr, puis traite la CI et la revue.</dd>
+    <dt id="skill">Skill</dt><dd>Le mot d'Anthropic pour ces compétences : une procédure écrite une fois, que l'agent charge quand il en a besoin, avec les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan. Un skill peut en appeler d'autres et les enchaîner : celui qui mène une tâche jusqu'à la PR passe par les skills de vérification, puis par celui qui ouvre la PR.</dd>
+    <dt id="slack">Slack</dt><dd>La messagerie de l'équipe : des canaux par sujet, et des fils de discussion sous chaque message.</dd>
+    <dt id="smoke-test">Smoke test</dt><dd>Un test rapide de bout en bout, qui vérifie que l'essentiel fonctionne avant d'aller plus loin. Le nom vient de l'électronique : on branche l'appareil et on regarde s'il fume.</dd>
+    <dt id="sous-shell">Sous-shell</dt><dd>Un shell lancé depuis un autre pour exécuter une commande à part. Un agent peut y glisser une commande interdite pour qu'elle échappe au contrôle.</dd>
+    <dt id="ssh">SSH</dt><dd>Une manière sécurisée de se connecter à un service distant avec une clé gardée sur sa machine, plutôt qu'avec un mot de passe.</dd>
+    <dt id="superset">Superset</dt><dd>L'application qui ouvre un workspace par tâche et montre d'un coup d'œil toutes les sessions d'agents en cours.</dd>
+    <dt id="tala">TALA</dt><dd>Le moteur de mise en page qui place les boîtes et les flèches d'un schéma D2.</dd>
+    <dt id="thread">Thread</dt><dd>Le mot anglais pour un fil de discussion dans Slack.</dd>
+    <dt id="token">Token</dt><dd>L'unité dans laquelle un modèle lit et écrit le texte, à peu près un morceau de mot. Ce qu'un modèle garde en tête, et ce qu'il coûte, se comptent en tokens.</dd>
+    <dt id="transcript">Transcript</dt><dd>L'enregistrement complet d'une session : tout ce que l'agent a lu, fait et répondu.</dd>
+    <dt id="transformer">Transformer</dt><dd>L'architecture de réseau de neurones, publiée par Google en 2017, sur laquelle reposent les modèles de langage actuels.</dd>
+    <dt id="typage">Typage</dt><dd>Le type d'une donnée dit de quelle sorte elle est : un nombre, un texte, une date. Une erreur de typage mélange les sortes, par exemple un texte passé là où un nombre est attendu ; un contrôle de types la repère avant même que le programme tourne.</dd>
+    <dt id="verrou">Verrou</dt><dd>Un mécanisme qui garantit qu'une seule session à la fois prend une décision donnée, pour éviter les doublons.</dd>
+    <dt id="webhook">Webhook</dt><dd>Un message qu'un service envoie de lui-même à un autre quand un événement se produit, par exemple un paiement reçu, au lieu d'attendre qu'on vienne le lui demander.</dd>
+    <dt id="workflow">Workflow</dt><dd>Un enchaînement d'étapes automatiques, lancé par un événement ou à heure fixe.</dd>
+    <dt id="workspace">Workspace</dt><dd>Un dossier de travail isolé, avec sa propre branche, où un agent avance sans marcher sur les autres.</dd>
+    <dt id="wrapper">Wrapper</dt><dd>Un petit programme qui en enveloppe un autre : il reçoit la commande à sa place, la vérifie ou la complète, puis la transmet.</dd>
+  </dl>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="05-garde-fous.html">← 5 · Garde-fous</a><span></span></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application TypeScript et une data platform Python serverless, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience d'octobre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'infrastructure ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+})();
+</script>
+</body>
+</html>

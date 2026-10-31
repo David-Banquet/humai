@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un harnais qui guide et qui corrige</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}</script>
+<meta name="description" content="Des guides avant le geste, des capteurs juste après, placés au plus tôt, et un humain qui règle le harnais quand une erreur revient.">
+<link rel="icon" type="image/png" href="img/mark-64.png">
+<link rel="apple-touch-icon" href="img/mark-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.illus{background:#FBF7EC;padding:0 0 10px}.illus img{border-radius:6px 6px 0 0}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram:not(.illus) img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] .hint[data-for="initie"],html[data-level="initie"] .hint[data-for="novice"]{display:none}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:1100px){
+  body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;width:270px;margin:0;padding:24px 14px;border-bottom:none;border-right:1px solid var(--rule);overflow-y:auto}
+  .topnav ol{flex-direction:column;white-space:normal;max-width:none;gap:2px;font-size:.88rem}
+  .topnav .brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px}
+}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+.sub{position:fixed;right:16px;bottom:16px;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 28px rgba(21,39,46,.18);display:flex;flex-direction:column;gap:8px;transform:translateY(12px);opacity:0;transition:transform .25s,opacity .25s}
+.sub.on{transform:none;opacity:1}
+.sub b{font:600 1.05rem var(--display)}
+.sub p{margin:0;font-size:.88rem;color:var(--muted)}
+.sub form{display:flex;gap:6px;flex-wrap:wrap}
+.sub input{flex:1 1 160px;min-width:0;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--ground);color:var(--ink)}
+.sub button[type=submit]{font:600 .9rem var(--body);padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--surface);cursor:pointer}
+.sub .x{position:absolute;top:6px;right:8px;border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px}
+.sub :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Modules"><a class="brand" href="index.html"><img src="img/mark-180.png" alt="" width="34" height="34">Humai</a><ol><li><a href="index.html"><img class="fi" src="img/mark-64.png" alt="" width="20" height="20">Sommaire</a></li><li><a href="01-charge-cognitive.html"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20">1 · Charge cognitive</a></li><li><a href="02-boucles.html"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20">2 · Humain sur la boucle</a></li><li><a href="03-skills.html"><img class="fi" src="img/modules/skills.png" alt="" width="20" height="20">3 · Intentions et compétences</a></li><li><a href="04-harnais.html" aria-current="page"><img class="fi" src="img/modules/harnais.png" alt="" width="20" height="20">4 · Harnais</a></li><li><a href="05-garde-fous.html"><img class="fi" src="img/modules/garde-fous.png" alt="" width="20" height="20">5 · Garde-fous</a></li><li><a href="lexique.html"><span class="fi fi-gl" aria-hidden="true">Aa</span>Lexique</a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Module 4 · Harnais</span>
+  <h1>Un harnais qui guide et qui corrige</h1>
+  <p class="lede">Un <span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span>, c'est un <span class="gl" tabindex="0" data-def="Le moteur d'une IA : un programme entraîné sur d'immenses quantités de texte, qui produit la suite la plus probable d'une conversation. Opus et Fable sont des modèles de Claude.">modèle</span> et son harnais : tout ce qui l'entoure, sauf le modèle lui-même. Le modèle apporte la force, le harnais la dirige. Il guide l'agent avant qu'il agisse, et lui dit le plus tôt possible quand il fait fausse route, pour qu'il se corrige avant qu'un humain ait à relire.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>L'image de l'attelage</h2>
+  <p>Un harnais n'ajoute rien à la force du cheval. Il la transmet à la charge, et il porte les signaux du meneur, la personne qui tient les guides, les longues rênes de l'attelage, et qui dirige la voiture. Le mot a pris le même sens pour les agents : <a href="https://martinfowler.com/articles/harness-engineering.html">Birgitta Böckeler</a>, chez Thoughtworks, résume « agent = modèle + harnais », le harnais désignant tout ce qui n'est pas le modèle : instructions, procédures, outils, vérifications.</p>
+  <p>L'image tient en 3 correspondances. Le cheval, c'est le modèle : la force, qu'on ne fabrique pas. Les guides, ce sont les instructions données avant le geste. Le meneur, c'est l'humain, qui règle le harnais au lieu de tirer lui-même la charge. Böckeler en reconnaît elle-même les limites : on lui a fait remarquer qu'on ne met pas un harnais à l'intérieur d'un chien. On s'en sert donc là où elle aide, et pas au-delà.</p>
+  <figure class="diagram illus"><img src="img/harnais-attelage.webp" alt="Une charrette chargée de blocs de code, tirée par un cheval. La meneuse, sur le siège, tient les longues rênes. Étiquettes : le meneur, l'humain ; les guides, les instructions ; le cheval, le modèle ; la charge, le travail." width="1536" height="1024" loading="lazy"><figcaption>Le meneur ne tire pas la charge : il tient les guides et règle le harnais.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Guider, puis corriger, au plus tôt</h2>
+  <p>Böckeler distingue 2 familles de contrôles, 2 façons de les exécuter et un principe pour les placer. On les a suivis en 6 étapes.</p>
+  <h3>1. Les guides, avant que l'agent agisse</h3>
+  <p>Les guides anticipent. Ils augmentent la chance que l'agent réussisse du premier coup : les instructions de projet, les compétences (module <a href="03-skills.html">3</a>), les règles chargées quand on touche certains fichiers. Ils parlent avant le geste, comme le meneur qui prépare le virage.</p>
+  <p>Seuls, ils ne suffisent pas. Un agent qui n'a que des guides applique des règles sans jamais savoir si elles ont marché.</p>
+  <figure class="diagram illus"><img src="img/harnais-etape1.webp" alt="Un robot marche sur une route qui tourne plus loin. Avant le virage, 3 panneaux : Instructions, Compétences, Règles. Au-dessus : avant le geste." width="1536" height="1024" loading="lazy"><figcaption>Rien ne revient vers l'agent une fois le code écrit.</figcaption></figure>
+  <h3>2. Les capteurs, après chaque geste</h3>
+  <p>Les capteurs observent ce que l'agent vient de faire et lui renvoient un signal : un test qui échoue, une <span class="gl" tabindex="0" data-def="Le type d'une donnée dit de quelle sorte elle est : un nombre, un texte, une date. Une erreur de typage mélange les sortes, par exemple un texte passé là où un nombre est attendu ; un contrôle de types la repère avant même que le programme tourne.">erreur de typage</span>, un refus. C'est là que l'image du cheval s'arrête. Mitchell Hashimoto, le créateur de Terraform, le dit simplement dans <a href="https://mitchellh.com/writing/my-ai-adoption-journey">le récit de son adoption des agents</a> : le moyen le plus sûr d'obtenir le bon résultat du premier coup est de donner à l'agent des outils rapides et fiables qui lui disent automatiquement quand il se trompe.</p>
+  <p>Un capteur sert d'autant mieux que son message est écrit pour l'agent : il dit ce qui ne va pas, et ce qui serait accepté. L'agent se corrige alors seul, avant qu'un humain ait à relire. Sans capteur, il répète les mêmes erreurs. Anthropic l'a observé sur ses <a href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">agents de longue durée</a> : sans consigne explicite, le modèle déclarait une fonctionnalité terminée après des tests unitaires, sans voir qu'elle ne marchait pas de bout en bout. Avec un outil pour la tester dans un navigateur, comme un utilisateur, il trouvait et corrigeait des bugs invisibles dans le code.</p>
+  <figure class="diagram illus"><img src="img/harnais-etape2.webp" alt="Un robot tape du code ; les pages passent sous 3 lampes vertes, les capteurs. L'une s'allume et renvoie au robot une bulle : ce qui ne va pas." width="1536" height="1024" loading="lazy"><figcaption>Le capteur qui s'allume renvoie à l'agent ce qui ne va pas, et l'agent se corrige.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Après chaque modification de fichier, un <span class="gl" tabindex="0" data-def="Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.">hook</span> lance le <span class="gl" tabindex="0" data-def="Le type d'une donnée dit de quelle sorte elle est : un nombre, un texte, une date. Une erreur de typage mélange les sortes, par exemple un texte passé là où un nombre est attendu ; un contrôle de types la repère avant même que le programme tourne.">contrôle de types</span> du périmètre : <code>pyright</code> pour la <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span>, <code>tsc</code> pour l'app. L'<span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> lit l'erreur dans la même <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span>, sans attendre la <span class="gl" tabindex="0" data-def="Intégration continue : à chaque PR, une batterie de vérifications automatiques tourne et peut bloquer le merge.">CI</span>. Quand le hook <code>guard-bash</code> refuse une commande, son message dit quelle forme serait acceptée.</p></div>
+  <h3>3. Au plus tôt</h3>
+  <p>Plus un problème est trouvé tard, plus il coûte : un agent qui a construit 3 étapes sur une erreur de typage doit défaire les 3. On place donc chaque capteur aussi tôt que son coût le permet. Böckeler appelle cela garder la qualité à gauche, du côté du début du chemin vers la <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">production</span>.</p>
+  <ul>
+    <li><b>À chaque modification</b>, ce qui tourne en quelques secondes : contrôle de types, tests ciblés, <span class="gl" tabindex="0" data-def="Un outil qui relit le code sans l'exécuter, à la recherche d'erreurs fréquentes et d'écarts aux conventions de l'équipe.">linters</span>.</li>
+    <li><b>Avant de rendre la main</b>, la suite de tests du périmètre, un <span class="gl" tabindex="0" data-def="Un test rapide de bout en bout, qui vérifie que l'essentiel fonctionne avant d'aller plus loin. Le nom vient de l'électronique : on branche l'appareil et on regarde s'il fume.">smoke test</span> sur un environnement jetable, et la vérification que l'objectif est atteint (module <a href="02-boucles.html">2</a>).</li>
+    <li><b>À la <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span></b>, ce qui coûte plus cher ou demande la vue d'ensemble : la <span class="gl" tabindex="0" data-def="Intégration continue : à chaque PR, une batterie de vérifications automatiques tourne et peut bloquer le merge.">CI</span> complète et la <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span> par un modèle.</li>
+    <li><b>En continu</b>, ce qui dérive lentement en dehors de tout changement, comme les <span class="gl" tabindex="0" data-def="Les briques de code écrites par d'autres, que le projet réutilise. Une faille dans l'une d'elles devient une faille du projet.">dépendances</span>, les coûts ou la sécurité, repassé à cadence fixe par des <span class="gl" tabindex="0" data-def="Une session d'agent planifiée à cadence fixe, avec une consigne écrite une fois.">routines</span>.</li>
+  </ul>
+  <figure class="diagram illus"><img src="img/harnais-etape3.webp" alt="4 portiques à lampe verte le long d'un chemin : à chaque modification, avant de rendre la main, à la PR, en continu. Au-dessus, des piles de pièces de plus en plus hautes : le coût d'une erreur trouvée. Un robot se tient au premier portique." width="1536" height="1024" loading="lazy"><figcaption>Plus à gauche, moins cher à corriger.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Les <span class="gl" tabindex="0" data-def="Le mot d'Anthropic pour ces compétences : une procédure écrite une fois, que l'agent charge quand il en a besoin, avec les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan. Un skill peut en appeler d'autres et les enchaîner : celui qui mène une tâche jusqu'à la PR passe par les skills de vérification, puis par celui qui ouvre la PR.">skills</span> <code>validate</code> de chaque périmètre lancent tests et contrôles avant d'ouvrir la <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> ; côté data platform, <code><span class="gl" tabindex="0" data-def="Un test rapide de bout en bout, qui vérifie que l'essentiel fonctionne avant d'aller plus loin. Le nom vient de l'électronique : on branche l'appareil et on regarde s'il fume.">smoke-test</span></code> rejoue un <span class="gl" tabindex="0" data-def="Un enchaînement d'étapes automatiques, lancé par un événement ou à heure fixe.">workflow</span> sur un environnement du pool. Le <span class="gl" tabindex="0" data-def="Le hook qui se déclenche quand l'agent veut rendre la main : il peut le renvoyer au travail si l'objectif n'est pas atteint.">hook Stop</span> qui juge la ligne <code><span class="gl" tabindex="0" data-def="La dernière ligne d'une demande, qui décrit l'état à atteindre, par exemple « la PR existe et est liée à la tâche ». Un contrôle vérifie cet état avant de laisser l'agent s'arrêter.">Goal:</span></code> renvoie au travail une session qui s'arrête avant l'objectif.</p></div>
+  <h3>4. Le déterministe d'abord, le jugement ensuite</h3>
+  <p>Guides et capteurs s'exécutent de 2 façons. Les <span class="gl" tabindex="0" data-def="Une vérification faite par un programme fixe, qui donne toujours la même réponse pour la même situation, sans IA.">contrôles déterministes</span>, tests, contrôle de types, analyse de structure, tournent en quelques secondes et donnent toujours la même réponse : ils sont assez bon marché pour tourner à chaque modification. Les <span class="gl" tabindex="0" data-def="Une vérification confiée à un modèle d'IA, qui juge comme le ferait un relecteur : plus lente et moins prévisible qu'un contrôle déterministe, mais seule capable de dire si un changement a du sens.">contrôles inférentiels</span> confient le jugement à un modèle, comme une revue de code : plus lents, plus chers, moins prévisibles, mais seuls capables de dire si un changement a du sens. On met le déterministe partout où il sait répondre, et on garde le jugement pour ce qu'aucun test ne tranche.</p>
+  <figure class="diagram illus"><img src="img/harnais-etape4.webp" alt="À gauche, un robot actionne une machine à tampon chronométrée qui valide des pages sur un tapis roulant : déterministe. Une page part, ce qui reste à juger, vers un robot qui la lit à la loupe à côté d'un sablier : inférentiel." width="1536" height="1024" loading="lazy"><figcaption>La machine tamponne en un instant ; le relecteur prend son temps pour juger le sens.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Sur chaque PR, un <span class="gl" tabindex="0" data-def="Le moteur d'une IA : un programme entraîné sur d'immenses quantités de texte, qui produit la suite la plus probable d'une conversation. Opus et Fable sont des modèles de Claude.">modèle</span> relit le <span class="gl" tabindex="0" data-def="La liste des lignes ajoutées, retirées ou modifiées par un changement : c'est ce qu'on lit pour relire une PR.">diff</span>, après les tests et les contrôles de types qui tournent avant lui.</p></div>
+  <h3>5. La CI documente après coup</h3>
+  <p>La CI est elle aussi un harnais, et elle peut faire plus que vérifier. Un agent peut y rétrodocumenter le code : dire ce que change chaque <span class="gl" tabindex="0" data-def="Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.">commit</span>, décrire l'architecture que touche la PR, générer les schémas qui la montrent. L'humain comprend le changement avant d'ouvrir le <span class="gl" tabindex="0" data-def="La liste des lignes ajoutées, retirées ou modifiées par un changement : c'est ce qu'on lit pour relire une PR.">diff</span>, et la PR devient facile à relire. Cette documentation, écrite à partir du code réel au moment où il change, nourrit aussi les outils de documentation de l'équipe, au lieu de vieillir à côté du code.</p>
+  <figure class="diagram illus"><img src="img/harnais-ci-doc.webp" alt="Une PR passe sur un tapis roulant dans une machine « CI » où 2 robots écrivent des notes et dessinent un schéma. Elle en ressort avec son résumé et son schéma, qu'une femme lit tranquillement ; une copie part vers une étagère « Documentation »." width="1536" height="1024" loading="lazy"><figcaption>La PR arrive déjà expliquée, et l'explication reste.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Sur chaque PR, 3 agents tournent dans la CI, chacun dans sa propre session. Le premier relit le diff. Le deuxième écrit le bloc d'architecture de la description, à partir d'un paquet de contexte assemblé sans appel à un modèle. Le troisième, quand la PR touche la data platform, dessine son architecture en <span class="gl" tabindex="0" data-def="Un langage pour décrire un schéma en texte ; un outil le dessine ensuite.">D2</span> avec le skill <code>archi-diagram</code>, et le schéma s'affiche dans la description. Le schéma est un bonus : s'il échoue, la <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span> ne passe pas au rouge.</p></div>
+  <h3>6. Le meneur règle le harnais</h3>
+  <p>Le travail de l'humain change. Il ne corrige plus l'agent à la main, il règle le harnais : quand un problème revient, il ajoute un guide qui le rend moins probable, ou un capteur qui le voit tout de suite. C'est la rétroaction décrite avec les compétences (module <a href="03-skills.html">3</a>), appliquée au harnais entier. Hashimoto en a fait sa règle : chaque fois qu'un agent se trompe, prendre le temps de construire de quoi il ne refera jamais cette erreur. L'agent peut d'ailleurs écrire lui-même une partie de ces contrôles, qu'il s'agisse d'un test de structure, d'une règle de linter ou d'un <span class="gl" tabindex="0" data-def="Un petit programme qui enchaîne des commandes pour automatiser un geste.">script</span> de vérification.</p>
+  <figure class="diagram illus"><img src="img/harnais-etape5.webp" alt="Une femme agenouillée resserre la boucle du collier d'un cheval : régler le harnais. Un robot lui tend une fiche et une lampe verte à ajouter. Au-dessus, une flèche circulaire autour d'un point d'exclamation : une erreur qui revient." width="1536" height="1024" loading="lazy"><figcaption>Le geste humain porte sur le harnais, pas sur l'erreur.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Le hook <code>guard-bash</code> s'est réglé ainsi. Un <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> a un jour visé la <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">prod</span> avec l'environnement passé en premier argument ; depuis, le hook lit l'environnement comme le <span class="gl" tabindex="0" data-def="Un petit programme qui enchaîne des commandes pour automatiser un geste.">script</span> le lit et refuse tout autre environnement que le <span class="gl" tabindex="0" data-def="Selon le contexte : un développeur, ou l'environnement de développement, une copie séparée où l'on teste sans toucher aux clients.">dev</span>. Une vingtaine de formes de cette commande ont rejoint sa suite de tests, <code>test_guard_bash.py</code>. Un autre hook note chaque demande d'autorisation dans un journal de frictions, relu pour décider quelles commandes autoriser d'office.</p></div>
+</section>
+
+<section>
+  <h2>Les pièces du harnais</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Brique</th><th>Ce qu'elle porte</th><th>Règle d'écriture</th></tr></thead>
+    <tbody>
+      <tr><td>Instructions de projet</td><td>Ce qui ne se voit pas dans le code et qui a déjà mordu.</td><td>Court, par zone du code. Pas de redite de ce que le code ou l'historique disent déjà.</td></tr>
+      <tr><td>Procédures (<span class="gl" tabindex="0" data-def="Le mot d'Anthropic pour ces compétences : une procédure écrite une fois, que l'agent charge quand il en a besoin, avec les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan. Un skill peut en appeler d'autres et les enchaîner : celui qui mène une tâche jusqu'à la PR passe par les skills de vérification, puis par celui qui ouvre la PR.">skills</span>)</td><td>Un chemin critique écrit une fois : démarrer une tâche, committer, piloter une PR jusqu'au <span class="gl" tabindex="0" data-def="Intégrer une PR relue dans la version principale du code. Après le merge, la modification part vers la production.">merge</span>, diagnostiquer. Le <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> revient à la <span class="gl" tabindex="0" data-def="Déploiement continu : après le merge, la modification part automatiquement en production.">CD</span>.</td><td>Une description qui dit quand s'en servir. Les <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">sessions</span> autonomes sont obligées de passer par elle.</td></tr>
+      <tr><td>Règles ciblées</td><td>Des contrats chargés seulement quand on touche certains chemins.</td><td>Liées à un motif de fichiers, pour ne pas polluer le contexte.</td></tr>
+      <tr><td>Permissions et <span class="gl" tabindex="0" data-def="Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.">hooks</span></td><td>Ce que l'agent peut faire sans demander, et les garde-fous (module <a href="05-garde-fous.html">5</a>).</td><td>Autonomes par périmètre, validés en CI.</td></tr>
+      <tr><td>Connecteurs</td><td>Les outils externes disponibles dans le périmètre.</td><td>Restreints au périmètre : pas d'accès à la base analytique dans une session applicative.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Une quarantaine de skills <span class="gl" tabindex="0" data-def="La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.">Claude Code</span> dans le monorepo : une douzaine partagés à la racine (<span class="gl" tabindex="0" data-def="Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.">commit</span>, cycle de vie d'une PR, démarrage d'une tâche, rédaction de tickets, plan relu en ligne, création de skills), une quinzaine propres à l'app (événements de domaine, commandes, routes, glossaire métier, tâches de fond), une dizaine propres à la data platform (déployer sur un environnement de dev, lancer un workflow, smoke test, surveiller, diagnostiquer). Plus des skills d'écriture hors <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span> : retirer les tics d'écriture IA, formater pour <span class="gl" tabindex="0" data-def="La messagerie de l'équipe : des canaux par sujet, et des fils de discussion sous chaque message.">Slack</span>, vulgariser un incident.</p></div>
+</section>
+
+<section>
+  <h2>Ce qui marche</h2>
+  <ul>
+    <li><b>Un skill par chemin critique, et un seul chemin.</b> Une PR qui peut s'ouvrir de 3 façons donnera 3 comportements.</li>
+    <li><b>Le même harnais partout.</b> La <span class="gl" tabindex="0" data-def="Une machine créée pour une seule session puis détruite : ce que l'agent y casse ne touche rien d'autre.">machine jetable</span> d'un agent charge exactement la même configuration que le poste du développeur : une amélioration profite aux deux.</li>
+    <li><b>Mesurer qu'un skill aide.</b> On note et on compare plusieurs exécutions avec et sans le skill, car une modification qui « a l'air mieux » ne l'est pas toujours.</li>
+    <li><b>Un skill qu'il faut penser à appeler finit oublié.</b> Un hook qui lit la demande peut le charger de lui-même, par exemple un skill de style dès qu'on rédige pour la messagerie. Une détection par motifs laisse quand même passer certaines formulations.</li>
+    <li><b>Auditer les instructions quand le modèle change.</b> Une consigne écrite pour le modèle précédent vieillit en silence : une commande, un chemin ou une cible cités qui n'existent plus, une façon de forcer un appel d'outil que le nouveau modèle refuse. Chaque affirmation de l'audit se vérifie contre le code avant d'être appliquée.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Un contexte propre</h2>
+  <p>Plus le contexte d'une session grossit, plus l'agent se disperse : il oublie une consigne du début, mélange des pistes déjà abandonnées, et chaque tour coûte plus cher. Disposer d'une grande fenêtre de contexte ne justifie pas de la remplir.</p>
+  <ul>
+    <li><b>Compacter bien avant la limite</b>, et parfois repartir d'une session neuve plutôt que de compacter.</li>
+    <li><b>Déléguer les lectures larges</b> à des agents qui ne rendent que leur conclusion.</li>
+    <li><b>Voir venir la limite</b> : le remplissage du contexte et les quotas d'usage affichés en permanence, pour ne pas être coupé au milieu d'une tâche.</li>
+    <li><b>Une PR suivante, une session suivante.</b> La session qui termine la première écrit la tâche de la suivante pendant qu'elle a tout le contexte. Cette tâche démarre dans son propre espace, sur une <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span> empilée sur la précédente pour éviter les conflits.</li>
+  </ul>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p><span class="gl" tabindex="0" data-def="Un modèle de Claude, rapide et capable, qui fait ici le gros du travail.">Opus</span> avec la fenêtre d'un million de <span class="gl" tabindex="0" data-def="L'unité dans laquelle un modèle lit et écrit le texte, à peu près un morceau de mot. Ce qu'un modèle garde en tête, et ce qu'il coûte, se comptent en tokens.">tokens</span>, et l'autocompaction réglée vers 400 000 (<code>autoCompactWindow</code>). Une statusline d'une cinquantaine de lignes de <span class="gl" tabindex="0" data-def="Le programme du terminal qui lit les commandes tapées au clavier et les exécute. Un agent de code passe par lui pour agir sur la machine.">shell</span> affiche modèle, dépôt, <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span>, contexte et quotas sur 5 h et 7 jours. Pour la PR suivante, <code><span class="gl" tabindex="0" data-def="Le skill qui démarre une tâche : il la crée sous sa feature, crée sa branche et ouvre un workspace avec un agent qui connaît déjà la tâche.">odette-start-task</span></code> lancé depuis la session de la première.</p></div>
+</section>
+
+<section>
+  <h2>Faire circuler les changements</h2>
+  <p>Versionner le harnais ne sert pas à grand-chose si personne ne sait qu'il a bougé.</p>
+  <ul>
+    <li>Des notes de version hebdomadaires des tâches d'outillage livrées. <span class="status s-wip">en cours</span></li>
+    <li>Chaque développeur relit le diff de sa configuration locale de la semaine et propose ce qui mérite d'être partagé. <span class="status s-wip">en cours</span></li>
+    <li>Un <span class="gl" tabindex="0" data-def="Dans Slack, un espace de discussion consacré à un sujet.">canal</span> réservé aux astuces, une par message, discutée en <span class="gl" tabindex="0" data-def="Sous un message Slack, la suite de réponses qui en discutent, sans encombrer le canal.">fil</span>. Celles que l'équipe adopte migrent dans le <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span>. <span class="status s-done">en place</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2>À reprendre</h2>
+  <ol>
+    <li>Donnez à l'agent des guides avant le geste et des capteurs après, jamais l'un sans l'autre.</li>
+    <li>Écrivez les messages des capteurs pour l'agent : ce qui ne va pas, et ce qui serait accepté.</li>
+    <li>Placez chaque contrôle au plus tôt : le rapide à chaque modification, le cher à la PR.</li>
+    <li>Le déterministe partout où il suffit, un modèle pour juger le reste.</li>
+    <li>Faites documenter chaque PR par la CI, schémas compris, pour la relecture humaine et pour la documentation de l'équipe.</li>
+    <li>Quand une erreur revient, réglez le harnais plutôt que de la corriger à la main.</li>
+    <li>Mettez la configuration de l'agent dans le dépôt, relue en PR, la même pour l'humain et pour l'agent.</li>
+    <li>Compactez tôt, ouvrez une session neuve pour la tâche suivante, et annoncez les changements de harnais comme des changements de produit.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="03-skills.html">← 3 · Intentions et compétences</a><a href="05-garde-fous.html">5 · Garde-fous →</a></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience d'octobre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'<span class="gl" tabindex="0" data-def="Les machines, réseaux, bases de données et services sur lesquels tourne le code, souvent décrits eux-mêmes dans du code.">infrastructure</span> ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+})();
+</script>
+<aside class="sub" id="sub" role="dialog" aria-labelledby="sub-t" hidden>
+  <button class="x" type="button" aria-label="Fermer">×</button>
+  <b id="sub-t">Recevoir les prochains posts</b>
+  <p>Un email à chaque nouveau post Humai, rien d'autre. Désinscription en un clic.</p>
+  <form action="https://buttondown.com/api/emails/embed-subscribe/davidbanquet" method="post" target="_blank">
+    <input type="email" name="email" required placeholder="vous@exemple.fr" aria-label="Votre email" autocomplete="email">
+    <button type="submit">M'abonner</button>
+  </form>
+</aside>
+<script>
+(() => {
+  const box = document.getElementById("sub"), end = document.querySelector(".pager");
+  let seen = null;
+  try { seen = localStorage.getItem("humai-sub"); } catch (e) {}
+  if (!box || !end || seen || !("IntersectionObserver" in window)) return;
+  function close(v) {
+    box.classList.remove("on");
+    setTimeout(() => { box.hidden = true; }, 250);
+    try { localStorage.setItem("humai-sub", v); } catch (e) {}
+  }
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    box.hidden = false;
+    requestAnimationFrame(() => box.classList.add("on"));
+  });
+  io.observe(end);
+  box.querySelector(".x").addEventListener("click", () => close("closed"));
+  box.querySelector("form").addEventListener("submit", () => close("subscribed"));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) close("closed"); });
+})();
+</script>
+</body>
+</html>
