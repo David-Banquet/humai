@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Une mémoire qui digère le brut</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}</script>
+<meta name="description" content="Une mémoire qui digère le brut, garde la cicatrice et la leçon, se range en moindre privilège et se raconte.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Humai">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Une mémoire qui digère le brut">
+<meta property="og:description" content="Une mémoire qui digère le brut, garde la cicatrice et la leçon, se range en moindre privilège et se raconte.">
+<meta property="og:url" content="https://humai-lab.fr/08-memoire.html">
+<meta property="og:image" content="https://humai-lab.fr/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Le cerveau feuillu de Humai, à côté du nom et de la devise : l'humain au centre de sa relation à l'IA.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon-64.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.illus{background:#FBF7EC;padding:0 0 10px}.illus img{border-radius:6px 6px 0 0}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram:not(.illus) img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] [data-for="initie"],html[data-level="initie"] [data-for="novice"],html:not([data-level]) [data-for="novice"]{display:none}
+.card .rt{color:var(--muted);font:500 .75rem/1 var(--mono)}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:1100px){
+  body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;width:270px;margin:0;padding:24px 14px;border-bottom:none;border-right:1px solid var(--rule);overflow-y:auto}
+  .topnav ol{flex-direction:column;white-space:normal;max-width:none;gap:2px;font-size:.88rem}
+  .topnav .brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px}
+}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+.sub{position:fixed;right:16px;bottom:16px;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 28px rgba(21,39,46,.18);display:flex;flex-direction:column;gap:8px;transform:translateY(12px);opacity:0;transition:transform .25s,opacity .25s}
+.sub.on{transform:none;opacity:1}
+.sub b{font:600 1.05rem var(--display)}
+.sub p{margin:0;font-size:.88rem;color:var(--muted)}
+.sub form{display:flex;gap:6px;flex-wrap:wrap}
+.sub input{flex:1 1 160px;min-width:0;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--ground);color:var(--ink)}
+.sub button[type=submit]{font:600 .9rem var(--body);padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--surface);cursor:pointer}
+.sub .x{position:absolute;top:6px;right:8px;border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px}
+.sub :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Modules"><a class="brand" href="index.html"><img src="img/favicon-180.png" alt="" width="34" height="34">Humai</a><ol><li><a href="index.html"><img class="fi" src="img/favicon-64.png" alt="" width="20" height="20">Sommaire</a></li><li><a href="01-charge-cognitive.html"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20">Charge cognitive</a></li><li><a href="02-boucles.html"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20">Humain sur la boucle</a></li><li><a href="03-skills.html"><img class="fi" src="img/modules/skills.png" alt="" width="20" height="20">Intentions et compétences</a></li><li><a href="04-harnais.html"><img class="fi" src="img/modules/harnais.png" alt="" width="20" height="20">Harnais</a></li><li><a href="05-garde-fous.html"><img class="fi" src="img/modules/garde-fous.png" alt="" width="20" height="20">Garde-fous</a></li><li><a href="06-contexte.html"><img class="fi" src="img/modules/contexte.png" alt="" width="20" height="20">Contexte</a></li><li><a href="07-ecrit.html"><img class="fi" src="img/modules/ecrit.png" alt="" width="20" height="20">Culture de l'écrit</a></li><li><a href="08-memoire.html" aria-current="page"><img class="fi" src="img/modules/memoire.png" alt="" width="20" height="20">Mémoire</a></li><li><a href="lexique.html"><span class="fi fi-gl" aria-hidden="true">Aa</span>Lexique</a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Mémoire · <span data-for="novice">⌚ 5 min</span><span data-for="initie">⌚ 6 min</span></span>
+  <h1>Une mémoire qui digère le brut</h1>
+  <p class="lede">Un <span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> commence chaque <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span> sans souvenir. Ce qu'il sait du projet, de l'équipe et de leurs erreurs passées, il faut le lui donner, et le lui donner en vrac le noie. Une mémoire fait ce tri : elle digère le brut, garde ce qui a de la valeur et laisse l'attention libre pour le reste. Elle est personnelle, et elle est aussi collective.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>Du brut à la mémoire partagée</h2>
+  <p>On y arrive en 5 étapes.</p>
+  <h3>1. Le cerveau digère le brut</h3>
+  <p>Le cerveau reçoit bien plus d'informations qu'il n'en garde. Il en encode d'énormes quantités, mais n'en stocke qu'une petite fraction sur la durée. Le tri se fait en grande partie pendant le sommeil : le cerveau y rejoue les souvenirs de la journée et les déplace vers le cortex, où ils rejoignent ce qu'il savait déjà (<a href="https://doi.org/10.1038/nrn2762">Diekelmann et Born, 2010</a>). Et il ne garde pas n'importe quoi. Dans <a href="https://doi.org/10.1523/JNEUROSCI.3575-10.2011">une expérience de 2011</a>, le sommeil ne renforçait le souvenir d'une liste de mots que chez les participants qui savaient qu'on les interrogerait dessus : le cerveau consolide en priorité ce qui lui servira.</p>
+  <p>Cette digestion libère l'attention. Ce qui est rangé ne coûte presque plus d'effort (<a href="03-skills.html">Intentions et compétences</a>), et la mémoire de travail reste disponible pour les éléments qui ont le plus de valeur : ce qui est nouveau, ce qui demande une décision.</p>
+  <figure class="diagram illus"><img src="img/memoire-digerer.webp" alt="Un flot de papiers, de points et de petits graphiques, « Le brut », entre dans la tête d'une femme endormie sous un croissant de lune. Il en ressort 3 pierres précieuses bien rangées : « Ce qui compte »." width="1536" height="1024" loading="lazy"><figcaption>Beaucoup entre, peu reste : ce qui servira.</figcaption></figure>
+  <h3>2. Du conscient à l'automatique, et retour</h3>
+  <p>Le conscient et l'inconscient communiquent, et la mémoire est l'un de leurs ponts. Depuis les années 1980, les neurosciences distinguent 2 grandes familles de mémoire, comme le retrace <a href="https://doi.org/10.1016/j.nlm.2004.06.005">le neuroscientifique Larry Squire</a> : celle qu'on peut rappeler consciemment, les faits et les souvenirs, et celle qui agit sans passer par la conscience, les gestes appris, les habitudes. La pianiste qui déchiffre une partition note par note passe par la première. Des années plus tard, elle joue en parlant à quelqu'un : le morceau est passé dans la seconde. Le chemin inverse existe aussi. Une habitude qui échoue se remarque, redevient consciente, et peut être corrigée.</p>
+  <p>Une équipe fonctionne de la même façon. Une règle commence par se discuter, en revue ; une fois écrite dans un <span class="gl" tabindex="0" data-def="Le mot d'Anthropic pour ces compétences : une procédure écrite une fois, que l'agent charge quand il en a besoin, avec les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan. Un skill peut en appeler d'autres et les enchaîner : celui qui mène une tâche jusqu'à la PR passe par les skills de vérification, puis par celui qui ouvre la PR.">skill</span> ou un garde-fou, elle s'applique sans qu'on y pense (<a href="03-skills.html">Intentions et compétences</a>). Quand elle échoue, elle remonte à la surface pour être <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span>.</p>
+  <figure class="diagram illus"><img src="img/memoire-conscient.webp" alt="À gauche, « Conscient » : une femme déchiffre une partition, concentrée, un doigt sur une touche. À droite, « Automatique » : elle joue des 2 mains sans regarder le clavier en bavardant avec un robot. Une flèche va de gauche à droite, une plus fine revient." width="1536" height="1024" loading="lazy"><figcaption>Ce qui s'apprend consciemment finit par s'exécuter seul, et remonte quand il échoue.</figcaption></figure>
+  <h3>3. Les arbres gardent la cicatrice et la leçon</h3>
+  <p>Un arbre n'a pas de cerveau, et il se souvient quand même. Le pathologiste forestier Alex Shigo a décrit comment un arbre blessé <a href="https://en.wikipedia.org/wiki/Compartmentalization_of_decay_in_trees">cloisonne sa blessure</a> : ses cellules forment des parois autour de la zone touchée pour freiner la pourriture, et le bois qui pousse ensuite enferme la cicatrice. Une coupe du tronc la montre encore, prise dans les cernes. Les plantes gardent aussi la leçon : une plante déjà exposée à un stress, une sécheresse ou une attaque, répond plus vite et plus fort la fois suivante. Les botanistes parlent d'<a href="https://doi.org/10.1016/j.plantsci.2007.09.002">empreinte de stress</a>.</p>
+  <p>Une équipe a besoin des deux. La cicatrice, c'est l'incident consigné dans le journal ; la leçon, c'est la règle qui fait réagir plus vite la fois suivante. C'est la même boucle que le sentier tracé par les passants, qu'on finit par paver (<a href="03-skills.html">Intentions et compétences</a>).</p>
+  <figure class="diagram illus"><img src="img/memoire-arbre.webp" alt="À gauche, la coupe d'un tronc et ses cernes, avec une ancienne blessure enfermée par un cerne plus épais : « La cicatrice ». À droite, sur une terre sèche et sous le soleil, un jeune arbre tient debout pendant que son voisin se fane : « La leçon »." width="1536" height="1024" loading="lazy"><figcaption>La trace de la blessure, et la réaction plus rapide qu'elle a apprise.</figcaption></figure>
+  <h3>4. Un second brain, en moindre privilège</h3>
+  <p>Ce que le sommeil fait pour le cerveau, un second brain le fait pour le contexte : des notes tenues hors de la tête, qui digèrent le contexte personnel, celui d'un projet, d'une équipe, d'une organisation. L'expression a été popularisée par Tiago Forte dans <a href="https://www.buildingasecondbrain.com/book"><i>Building a Second Brain</i></a>. Pour un agent, qui ne garde rien d'une session à l'autre, c'est la seule mémoire possible : il ne sait que ce qu'on lui fait relire.</p>
+  <p>Tout le contexte n'est pas à donner à tout le monde. On applique à la mémoire le <a href="https://en.wikipedia.org/wiki/Principle_of_least_privilege">principe du moindre privilège</a>, posé par Jerome Saltzer et Michael Schroeder en 1975 pour la sécurité informatique : chacun n'accède qu'à ce dont sa tâche a besoin. Une session sur un projet lit la mémoire de ce projet, pas celle des autres, et des notes personnelles restent personnelles. Moins de contexte, c'est aussi moins à relire, et un agent qui reste sur ce qui compte.</p>
+  <figure class="diagram illus"><img src="img/memoire-second-brain.webp" alt="Un robot devant un classeur à 4 tiroirs fermés à clé : « Personnel », « Projet », « Équipe », « Organisation ». Il tient un anneau de 2 clés et n'ouvre que le tiroir « Projet » : « Moindre privilège »." width="1536" height="1024" loading="lazy"><figcaption>Chaque session n'ouvre que les tiroirs dont sa tâche a besoin.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Nos notes vivent sur 3 étages. Personnel, hors du <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span> : un journal des irritants partagé par toutes les <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">sessions</span> d'un développeur, des notes de contexte, et la mémoire de <span class="gl" tabindex="0" data-def="La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.">Claude Code</span>, rangée par projet, avec un fichier par fait et un index d'une ligne par fait relu au début de chaque session. Équipe, dans le dépôt : les fichiers d'instructions et les <span class="gl" tabindex="0" data-def="Le mot d'Anthropic pour ces compétences : une procédure écrite une fois, que l'agent charge quand il en a besoin, avec les étapes, les règles et les outils d'une tâche précise, comme ouvrir une PR ou découper un plan. Un skill peut en appeler d'autres et les enchaîner : celui qui mène une tâche jusqu'à la PR passe par les skills de vérification, puis par celui qui ouvre la PR.">skills</span>. Organisation : <span class="gl" tabindex="0" data-def="Notre outil interne de pilotage : on y écrit les features, les plans et les tâches, et on peut l'appeler depuis Slack.">Odette</span>, notre outil de pilotage, avec ses <span class="gl" tabindex="0" data-def="Une fonctionnalité, ou un chantier : un ensemble de tâches qui apportent ensemble une même valeur à l'utilisateur.">features</span> et ses tâches. Une règle interdit de recopier les notes personnelles dans une <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span>, un message ou une page partagée.</p></div>
+  <h3>5. Une mémoire collective</h3>
+  <p>La mémoire n'est pas seulement personnelle. Le sociologue Maurice Halbwachs l'a montré dès 1925 dans <i>Les Cadres sociaux de la mémoire</i> : chacun se souvient à l'intérieur des cadres de son groupe, et le groupe garde une <a href="https://fr.wikipedia.org/wiki/M%C3%A9moire_collective">mémoire collective</a>, faite aussi d'événements que ses membres n'ont pas vécus mais qui leur ont été transmis.</p>
+  <p>Les communautés juives en donnent un exemple qui traverse les siècles. <i>Zakhor</i>, « souviens-toi », est un commandement répété dans la Bible hébraïque. Dans <a href="https://en.wikipedia.org/wiki/Zakhor:_Jewish_History_and_Jewish_Memory"><i>Zakhor</i></a> (1982), l'historien Yosef Hayim Yerushalmi montre que cette mémoire s'est longtemps transmise par le rite, la liturgie et le récit plutôt que par les livres d'histoire. Chaque année, le récit de la Pâque juive demande à chacun de se voir comme s'il était lui-même sorti d'Égypte : le passé est raconté à nouveau, à la même table, d'une génération à l'autre.</p>
+  <p>Une équipe entretient sa mémoire de la même façon : en racontant ses incidents, ses décisions et leurs raisons, à des moments fixés, dans des lieux où chacun les retrouve. Ce qui n'est raconté qu'une fois s'oublie.</p>
+  <figure class="diagram illus"><img src="img/memoire-collective.webp" alt="Une longue table de fête où sont assises plusieurs générations. Une grand-mère raconte une histoire, tout le monde écoute, et elle tend un livre à une petite fille : « Souviens-toi »." width="1536" height="1024" loading="lazy"><figcaption>Une mémoire collective vit tant qu'on la raconte.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Ce dossier en est une forme : une <span class="gl" tabindex="0" data-def="Une session d'agent planifiée à cadence fixe, avec une consigne écrite une fois.">routine</span> le met à jour chaque semaine à partir de ce qui a été réellement livré. Et le <span class="gl" tabindex="0" data-def="Sous un message Slack, la suite de réponses qui en discutent, sans encombrer le canal.">fil</span> <span class="gl" tabindex="0" data-def="La messagerie de l'équipe : des canaux par sujet, et des fils de discussion sous chaque message.">Slack</span> où naît une demande en garde l'histoire, de la question au <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> (<a href="02-boucles.html">Humain sur la boucle</a>).</p>
+<p>Une mémoire d'équipe digère chaque jour les fils Slack et les tâches d'Odette : un résumé par fil ou par tâche, les décisions repérées, les tâches et les fichiers cités, et les noms de clients remplacés par « un client ». Au démarrage d'une session sur la <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span> d'une tâche, un <span class="gl" tabindex="0" data-def="Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.">hook</span> en injecte environ 1 500 caractères au plus : les tâches voisines, les PR ouvertes qui touchent les mêmes fichiers, et les décisions des 30 derniers jours sur ce que la branche modifie. Une source qui ne répond pas est sautée, sans bloquer la session.</p></div>
+</section>
+
+<section>
+  <h2>À essayer chez vous</h2>
+  <ol>
+    <li>Ne donnez pas le brut à l'agent : faites-le digérer, et gardez ce qui servira.</li>
+    <li>Faites passer les règles du conscient à l'automatique, dans un skill ou un garde-fou, et laissez-les remonter quand elles échouent.</li>
+    <li>Gardez la cicatrice et la leçon : l'incident consigné, et la règle qui fait réagir plus vite.</li>
+    <li>Rangez le contexte par étage, personnel, projet, équipe, organisation, et ne donnez à chaque session que celui dont elle a besoin.</li>
+    <li>Entretenez la mémoire collective en la racontant, à des moments fixés.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="07-ecrit.html">← Culture de l'écrit</a><a href="lexique.html">Lexique →</a></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience de novembre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'<span class="gl" tabindex="0" data-def="Les machines, réseaux, bases de données et services sur lesquels tourne le code, souvent décrits eux-mêmes dans du code.">infrastructure</span> ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+})();
+</script>
+<aside class="sub" id="sub" role="dialog" aria-labelledby="sub-t" hidden>
+  <button class="x" type="button" aria-label="Fermer">×</button>
+  <b id="sub-t">Recevoir les prochains posts</b>
+  <p>Un email à chaque nouveau post Humai, rien d'autre. Désinscription en un clic.</p>
+  <form action="https://buttondown.com/api/emails/embed-subscribe/davidbanquet" method="post" target="_blank">
+    <input type="email" name="email" required placeholder="vous@exemple.fr" aria-label="Votre email" autocomplete="email">
+    <button type="submit">M'abonner</button>
+  </form>
+</aside>
+<script>
+(() => {
+  const box = document.getElementById("sub"), end = document.querySelector(".pager");
+  let seen = null;
+  try { seen = localStorage.getItem("humai-sub"); } catch (e) {}
+  if (!box || !end || seen || !("IntersectionObserver" in window)) return;
+  function close(v) {
+    box.classList.remove("on");
+    setTimeout(() => { box.hidden = true; }, 250);
+    try { localStorage.setItem("humai-sub", v); } catch (e) {}
+  }
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    box.hidden = false;
+    requestAnimationFrame(() => box.classList.add("on"));
+  });
+  io.observe(end);
+  box.querySelector(".x").addEventListener("click", () => close("closed"));
+  box.querySelector("form").addEventListener("submit", () => close("subscribed"));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) close("closed"); });
+})();
+</script>
+</body>
+</html>
