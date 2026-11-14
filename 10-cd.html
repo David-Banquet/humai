@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chaque branche pousse à part, puis rejoint le tronc</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}try{if(localStorage.getItem("humai-nav")==="open")document.documentElement.dataset.nav="open"}catch(e){}</script>
+<meta name="description" content="Ne déployer que ce qui a changé depuis le dernier succès, en vagues parallèles, et sur un environnement jetable avant le merge.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Humai">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Chaque branche pousse à part, puis rejoint le tronc">
+<meta property="og:description" content="Ne déployer que ce qui a changé depuis le dernier succès, en vagues parallèles, et sur un environnement jetable avant le merge.">
+<meta property="og:url" content="https://humai-lab.fr/10-cd.html">
+<meta property="og:image" content="https://humai-lab.fr/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Le cerveau feuillu de Humai, à côté du nom et de la devise : l'humain au centre de sa relation à l'IA.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon-64.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.illus{background:#FBF7EC;padding:0 0 10px}.illus img{border-radius:6px 6px 0 0}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram:not(.illus) img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] [data-for="initie"],html[data-level="initie"] [data-for="novice"],html:not([data-level]) [data-for="novice"]{display:none}
+.card .rt{color:var(--muted);font:500 .75rem/1 var(--mono)}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand,.nav-toggle{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:760px){
+  body{padding-left:80px;transition:padding-left .2s}
+  html[data-nav="open"] body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;z-index:6;width:64px;margin:0;padding:18px 8px;border-bottom:none;border-right:1px solid var(--rule);overflow:hidden auto;transition:width .2s}
+  html[data-nav="open"] .topnav{width:270px}
+  .topnav ol{flex-direction:column;max-width:none;gap:2px;font-size:.88rem}
+  .topnav a{gap:0;padding:8px 13px}
+  .topnav .lbl{margin-left:10px;overflow:hidden;text-overflow:ellipsis;transition:opacity .2s}
+  html:not([data-nav="open"]) .topnav .lbl{opacity:0;width:0;margin-left:0}
+  .topnav .brand{display:flex;align-items:center;padding:0 7px 12px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px;flex:none}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;width:48px;height:34px;margin:0 0 12px;padding:0;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--muted);cursor:pointer}
+  .nav-toggle:hover,.nav-toggle:focus-visible{color:var(--ink)}
+  .nav-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .nav-toggle svg{transition:transform .2s}
+  html[data-nav="open"] .nav-toggle svg{transform:rotate(180deg)}
+}
+@media (prefers-reduced-motion:reduce){body,.topnav,.topnav .lbl,.nav-toggle svg{transition:none}}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+.sub{position:fixed;right:16px;bottom:16px;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 28px rgba(21,39,46,.18);display:flex;flex-direction:column;gap:8px;transform:translateY(12px);opacity:0;transition:transform .25s,opacity .25s}
+.sub.on{transform:none;opacity:1}
+.sub b{font:600 1.05rem var(--display)}
+.sub p{margin:0;font-size:.88rem;color:var(--muted)}
+.sub form{display:flex;gap:6px;flex-wrap:wrap}
+.sub input{flex:1 1 160px;min-width:0;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--ground);color:var(--ink)}
+.sub button[type=submit]{font:600 .9rem var(--body);padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--surface);cursor:pointer}
+.sub .x{position:absolute;top:6px;right:8px;border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px}
+.sub :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="topnav" id="modules" aria-label="Modules"><a class="brand" href="index.html"><img src="img/favicon-180.png" alt="" width="34" height="34"><span class="lbl">Humai</span></a><button class="nav-toggle" type="button" aria-controls="modules" aria-expanded="false" aria-label="Déplier le menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><ol><li><a href="index.html" title="Sommaire"><img class="fi" src="img/favicon-64.png" alt="" width="20" height="20"><span class="lbl">Sommaire</span></a></li><li><a href="01-charge-cognitive.html" title="Charge cognitive"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20"><span class="lbl">Charge cognitive</span></a></li><li><a href="02-boucles.html" title="Humain sur la boucle"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20"><span class="lbl">Humain sur la boucle</span></a></li><li><a href="03-skills.html" title="Intentions et compétences"><img class="fi" src="img/modules/skills.png" alt="" width="20" height="20"><span class="lbl">Intentions et compétences</span></a></li><li><a href="04-harnais.html" title="Harnais"><img class="fi" src="img/modules/harnais.png" alt="" width="20" height="20"><span class="lbl">Harnais</span></a></li><li><a href="05-garde-fous.html" title="Garde-fous"><img class="fi" src="img/modules/garde-fous.png" alt="" width="20" height="20"><span class="lbl">Garde-fous</span></a></li><li><a href="06-contexte.html" title="Contexte"><img class="fi" src="img/modules/contexte.png" alt="" width="20" height="20"><span class="lbl">Contexte</span></a></li><li><a href="07-ecrit.html" title="Culture de l'écrit"><img class="fi" src="img/modules/ecrit.png" alt="" width="20" height="20"><span class="lbl">Culture de l'écrit</span></a></li><li><a href="08-memoire.html" title="Mémoire"><img class="fi" src="img/modules/memoire.png" alt="" width="20" height="20"><span class="lbl">Mémoire</span></a></li><li><a href="09-monorepo.html" title="Tronc"><img class="fi" src="img/modules/monorepo.png" alt="" width="20" height="20"><span class="lbl">Tronc</span></a></li><li><a href="10-cd.html" title="Branches" aria-current="page"><img class="fi" src="img/modules/cd.png" alt="" width="20" height="20"><span class="lbl">Branches</span></a></li><li><a href="11-frictions-dora.html" title="Pouls"><img class="fi" src="img/modules/frictions-dora.png" alt="" width="20" height="20"><span class="lbl">Pouls</span></a></li><li><a href="lexique.html" title="Lexique"><span class="fi fi-gl" aria-hidden="true">Aa</span><span class="lbl">Lexique</span></a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Branches · Déploiement continu et isolation · <span data-for="novice">⌚ 7 min</span><span data-for="initie">⌚ 8 min</span></span>
+  <h1>Chaque branche pousse à part, puis rejoint le tronc</h1>
+  <p class="lede">Chaque <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span> du code pousse à part, sur un environnement à elle, avant de rejoindre le tronc, puis la <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">production</span>. Avec des <span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agents</span>, le nombre de <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> monte vite. Si chaque <span class="gl" tabindex="0" data-def="Intégrer une PR relue dans la version principale du code. Après le merge, la modification part vers la production.">merge</span> redéploie tout, une stack à la fois, c'est la <span class="gl" tabindex="0" data-def="Déploiement continu : après le merge, la modification part automatiquement en production.">CD</span> qui devient le goulot d'étranglement. On ne déploie donc que ce qui a changé depuis le dernier <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> réussi, en parallèle quand le graphe de <span class="gl" tabindex="0" data-def="Les briques de code écrites par d'autres, que le projet réutilise. Une faille dans l'une d'elles devient une faille du projet.">dépendances</span> le permet. Et avant le merge, chaque humain et chaque agent exécute sa branche sur un environnement jetable, sans marcher sur les autres.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>Le diff depuis le dernier succès, pas depuis le dernier commit</h2>
+  <ul>
+    <li><b>Un marqueur par environnement</b> : l'identifiant du dernier état déployé avec succès.</li>
+    <li><b>Il n'avance que si tout a réussi, et jamais en arrière.</b> Un seul composant l'écrit. Un merge qui a sauté la CD est rattrapé au suivant, et un déploiement échoué est rejoué.</li>
+    <li><b>Un simple filtre de chemins ne suffit pas</b> : un déploiement échoué ne serait jamais rejoué, puisque le <span class="gl" tabindex="0" data-def="Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.">commit</span> suivant ne montre plus le changement.</li>
+    <li><b>Un run à la fois, et une file d'une seule place.</b> Le run en cours n'est jamais interrompu, sinon 2 runs se disputeraient le marqueur. Les merges qui arrivent pendant ce temps ne s'empilent pas : seul le dernier attend, les autres sont sautés. Rien n'est perdu, puisque le dernier part du dernier succès et livre d'un coup tout ce que les autres apportaient.</li>
+    <li><b>Un garde contre les vieux runs</b> : un run relancé qui arrive après un commit plus récent n'applique rien.</li>
+  </ul>
+  <figure class="diagram illus"><img src="img/branches-marqueur.webp" alt="Une route jalonnée. Un drapeau corail marque le « dernier succès » ; une charrette chargée de colis en repart. Plus loin, un banc « 1 place » où attend une seule charrette ; 2 charrettes vides, plus anciennes, sont rangées sur le bas-côté, et leurs robots saluent. En titre : « Un run à la fois, le dernier repart du drapeau »." width="1536" height="1024" loading="lazy"><figcaption>Une seule place en attente : le dernier merge la prend, et livre aussi ce que les autres apportaient.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p><span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">Data platform</span> : le SHA du dernier <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">déploiement</span> réussi dans un paramètre SSM par environnement, puis <code><span class="gl" tabindex="0" data-def="L'outil qui enregistre l'historique du code : il crée les commits et les branches, et les envoie au dépôt.">git</span> <span class="gl" tabindex="0" data-def="La liste des lignes ajoutées, retirées ou modifiées par un changement : c'est ce qu'on lit pour relire une PR.">diff</span> SHA..HEAD</code>. App : le hash de l'arbre <code>app/</code> comparé à celui d'un tag <code>deployed/*</code>, déplacé seulement après un déploiement réussi. L'auto-déploiement du PaaS est coupé, car il livrait chaque push sur main, même sans changement de l'app.</p></div>
+  <div class="trap"><b>Un vieux run qui défait le travail</b><span>Relancé, un ancien run a supprimé des tables qu'un commit plus récent venait de déclarer. C'est l'origine du garde qui compare le commit à appliquer au dernier appliqué.</span></div>
+</section>
+
+<section>
+  <h2>Du fichier modifié au composant, puis aux vagues</h2>
+  <p>Une table de correspondance traduit chaque fichier modifié en composants à redéployer : un template donne sa stack, le code d'une fonction donne la stack de sa famille, une bibliothèque commune donne tous ses consommateurs, un <span class="gl" tabindex="0" data-def="Un mécanisme qui garantit qu'une seule session à la fois prend une décision donnée, pour éviter les doublons.">verrou</span> de dépendances donne les couches et les images.</p>
+  <div class="trap"><b>Une convention de dossier qui ne tenait plus</b><span>La table déduisait la stack du dossier d'une fonction. Une nouvelle fonction a été rangée dans un dossier dont la stack n'existait pas, mais déclarée dans une autre : la CD a demandé une stack inconnue et s'est arrêtée, sur le <span class="gl" tabindex="0" data-def="Selon le contexte : un développeur, ou l'environnement de développement, une copie séparée où l'on teste sans toucher aux clients.">dev</span> comme sur la prod, sans rien déployer. Elle part du dernier déploiement réussi : chaque run suivant échouait pareil tant que la table n'était pas corrigée. Un test couvre désormais ce dossier.</span></div>
+  <p>Plutôt que de déployer un composant à la fois, on calcule ensuite des <b>niveaux de dépendance</b> à partir de ce que chaque composant produit et consomme, et chaque niveau part en parallèle. L'ordre n'a pas besoin d'être contrôlé après coup : le code qui refuserait un mauvais ordre est celui qui le produit.</p>
+  <figure class="diagram"><img src="img/cd-vagues.png" alt="Au merge, la CD calcule le diff depuis le dernier déploiement réussi, traduit les fichiers en composants, les déploie en vagues parallèles, applique les transformations de données en dernier, puis avance le marqueur si tout a réussi." loading="lazy"><figcaption>Chez Wavo. Le marqueur n'avance que si tout a réussi.</figcaption></figure>
+  <div class="stats">
+    <div class="stat"><span class="big">21,5 min</span><span class="lbl">pour un déploiement complet de la <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span>, une stack à la fois</span></div>
+    <div class="stat"><span class="big">29 stacks · 6 vagues</span><span class="lbl">calculées depuis le graphe de dépendances, jusqu'à 9 en parallèle</span></div>
+  </div>
+  <figure class="diagram illus"><img src="img/graph-branches-rythme.webp" alt="Graphique, 2 courbes par semaine du 31/08 au 02/11 : les PR mergées sur la data platform passent de 17 à 63, et les runs réussis de la CD de 12 à 56. Les 2 courbes montent ensemble." width="1536" height="896" loading="lazy"><figcaption>Chez Wavo. Les runs de CD ont été multipliés par 4,7 en 8 semaines, au rythme des PR de la data platform : 348 PR en 10 semaines, pour 308 runs réussis. La CD n'est pas devenue le goulot, et la file d'une seule place a sauté 19 runs, que le suivant a rattrapés.</figcaption></figure>
+  <div class="trap"><b>Une famille déployée autrement</b><span>Toutes les familles de composants envoyaient leur template par un stockage intermédiaire, sauf une, qui l'envoyait en ligne. Le jour où l'un de ses templates a dépassé la taille acceptée en ligne, chaque run de la CD a échoué sur lui pendant 1 jour : la vague suivante, celle du catalogue, était sautée, et un correctif pourtant mergé n'arrivait pas en prod. Il a suffi d'une option pour réparer : toutes les familles passent maintenant par le même chemin d'envoi.</span></div>
+</section>
+
+<section>
+  <h2>L'ordre qui ne se négocie pas</h2>
+  <p>L'<span class="gl" tabindex="0" data-def="Les machines, réseaux, bases de données et services sur lesquels tourne le code, souvent décrits eux-mêmes dans du code.">infra</span> d'abord, le catalogue ensuite, les transformations de données en dernier. Le premier merge qui ajoutait une table et la vue qui la lit est passé au rouge parce que la vue avait été créée avant la table. Mieux vaut sérialiser que tolérer une table manquante : une vue sautée reste en silence sur ses anciennes colonnes.</p>
+  <p>Les transformations tournent par défaut en <b>mode plan</b> : on compile et on liste ce qui serait supprimé, sans rien appliquer. L'outil ne propose pas de change set, ce mode en tient lieu.</p>
+</section>
+
+<section>
+  <h2>Le même déploiement, sur un environnement à soi</h2>
+  <p>Avant le merge, plusieurs humains et plusieurs agents travaillent en parallèle. Chacun a besoin d'un endroit où exécuter sa branche, avec la bonne base et des tiers qui ne coûtent rien. Le mécanisme de la CD sert aussi là : un environnement loué ne déploie que le <span class="gl" tabindex="0" data-def="La liste des lignes ajoutées, retirées ou modifiées par un changement : c'est ce qu'on lit pour relire une PR.">diff</span> de la branche par rapport à ce qu'il porte déjà. La forme de l'environnement, elle, dépend de ce qui coûte le plus cher.</p>
+</section>
+
+<section>
+  <h2>Partir de ce qui coûte</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Ce qui coûte</th><th>La réponse</th></tr></thead>
+    <tbody>
+      <tr><td><b>Créer l'infra</b> (des dizaines de minutes à froid)</td><td>Un pool d'environnements gardés chauds, loués par une écriture conditionnelle, rendus sans être détruits. La branche suivante ne déploie que son diff.</td></tr>
+      <tr><td><b>Copier les données</b> (une restauration complète par environnement)</td><td>Une copie copy-on-write de la base : quelques secondes, quelle que soit la taille.</td></tr>
+    </tbody>
+  </table></div>
+  <figure class="diagram illus"><img src="img/branches-pepiniere.webp" alt="Une serre : 5 pots tenus au chaud, étiquetés dev1 à dev5 ; une femme en emporte un, avec un sablier pour la durée de location. À côté, un grand arbre marqué « base » ; un jardinier y prélève une bouture et la met en pot, un chronomètre indiquant quelques secondes. En titre : « Des pots au chaud, une bouture en quelques secondes »." width="1536" height="1024" loading="lazy"><figcaption>Des environnements gardés au chaud, et une copie de la base en quelques secondes.</figcaption></figure>
+  <ul>
+    <li><b>Une branche de base par branche de code.</b> Elle est créée au premier démarrage, puis réutilisée : le poste du développeur, l'agent et l'app de <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span> de la PR ouvrent sur les mêmes données. Personne n'a à la demander, et elle disparaît seule quand plus personne n'y touche.</li>
+    <li><b>Un bail qui expire</b>, et une CD qui libère l'environnement au merge. Sans ça, le pool se remplit de branches abandonnées.</li>
+    <li><b>Un pool qui grandit jusqu'à un plafond.</b> Quand aucun environnement n'est libre, on en crée un plutôt que de renoncer au test ; au-delà du plafond, c'est un humain qui décide d'en ajouter.</li>
+    <li><b>Un échantillon, pas une copie de prod</b>, sauf demande explicite. La source de données se choisit à la location : synthétique par défaut, vide, ou une copie de la sauvegarde de la nuit, jamais la prod elle-même.</li>
+    <li><b>Une sauvegarde périmée fait échouer</b> la location, plutôt que de servir en silence les données de l'avant-veille.</li>
+    <li><b>Un garde-fou d'isolement exécutable</b> : avant tout déploiement, il compare les cibles (base, cache, file de tâches) à celles de la prod et refuse si elles se recoupent. Il compare les valeurs sans jamais les afficher.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Des tiers simulés par défaut</h2>
+  <p>Chaque service externe se règle par environnement : <b>simulé</b> (un serveur local qui répond, liste les appels reçus et déclenche les <span class="gl" tabindex="0" data-def="Un message qu'un service envoie de lui-même à un autre quand un événement se produit, par exemple un paiement reçu, au lieu d'attendre qu'on vienne le lui demander.">webhooks</span> à la demande) ou <b>bac à sable</b> (identifiants de test uniquement). Les identifiants de prod ne sont jamais injectés ailleurs qu'en prod, et l'application doit pouvoir démarrer sans aucun accès à un tiers réel.</p>
+  <figure class="diagram illus"><img src="img/branches-decor.webp" alt="Une scène de théâtre dont le décor est fait de façades en carton : « banque », « compta », « signature ». Un robot comédien tend un papier au guichet de la banque, où un machiniste caché derrière la façade le tamponne ; en coulisse, une autre machiniste agite une clochette. En titre : « Un décor qui répond comme les vrais »." width="1536" height="1024" loading="lazy"><figcaption>Un décor qui répond comme les vrais services, sans un euro réel.</figcaption></figure>
+</section>
+
+<section>
+  <h2>Où en est-on</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Brique</th><th>Statut</th></tr></thead>
+    <tbody>
+      <tr><td>Pool d'environnements data loués, bail et expiration</td><td><span class="status s-done">en place</span></td></tr>
+      <tr><td>Un environnement isolé à la demande par agent</td><td><span class="status s-done">en place</span></td></tr>
+      <tr><td>Serveur de tiers simulés, piloté par requêtes</td><td><span class="status s-done">en place</span></td></tr>
+      <tr><td>Bout en bout sur données synthétiques</td><td><span class="status s-done">en place</span></td></tr>
+      <tr><td>Une branche de base copy-on-write par branche <span class="gl" tabindex="0" data-def="L'outil qui enregistre l'historique du code : il crée les commits et les branches, et les envoie au dépôt.">git</span></td><td><span class="status s-done">en place</span></td></tr>
+      <tr><td>Pseudonymisation de la base parente</td><td><span class="status s-wip">en cours</span></td></tr>
+      <tr><td>Une app de revue par PR, lien posté sur la PR</td><td><span class="status s-wip">en cours</span></td></tr>
+      <tr><td>Choix de la source de données et du mode des tiers à la location</td><td><span class="status s-next">à venir</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Nous avons jusqu'à 10 environnements <span class="gl" tabindex="0" data-def="Amazon Web Services : le cloud d'Amazon, qui loue serveurs, bases de données et services à la demande.">AWS</span> <code>devN</code> enregistrés dans <span class="gl" tabindex="0" data-def="Une base de données d'AWS ; ici, elle sert de verrou partagé entre les sessions.">DynamoDB</span> : quand aucun n'est libre, <code>make env</code> en crée un, et au-delà de 10, l'<span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> doit le demander à un humain. Un bail de 3 h sans déploiement, destruction après 7 jours sans locataire. Côté app, un <code>phony-server</code> qui simule banque, comptabilité, signature et stockage, et une <span class="gl" tabindex="0" data-def="Une copie de travail du code, à côté de la version principale, où l'on prépare une modification sans gêner les autres. Elle revient dans la version principale par une PR.">branche</span> Neon par branche git. <code>yarn db:branch</code>, lancé à chaque démarrage du serveur de <span class="gl" tabindex="0" data-def="Selon le contexte : un développeur, ou l'environnement de développement, une copie séparée où l'on teste sans toucher aux clients.">dev</span>, la crée en quelques secondes à partir de la branche par défaut du projet Neon, qui porte la sauvegarde restaurée de la <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">prod</span>, ou la réutilise si elle existe ; l'app de <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span> de la <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> fait de même au premier push. Chaque démarrage et chaque push repoussent son expiration à 2 jours, et son mot de passe, copié du parent, est réinitialisé dès qu'une app de revue l'adopte. Un <code>devN</code> lit et écrit la base de l'app dans la branche Neon de la branche git qui le loue, et plus dans la base de prod. Les agents tournent sur des <span class="gl" tabindex="0" data-def="Une petite machine virtuelle, créée en quelques instants et jetée après usage : l'agent y travaille isolé du reste.">MicroVM</span> ou dans des <span class="gl" tabindex="0" data-def="Un dossier de travail isolé, avec sa propre branche, où un agent avance sans marcher sur les autres.">workspaces</span> <span class="gl" tabindex="0" data-def="L'application qui ouvre un workspace par tâche et montre d'un coup d'œil toutes les sessions d'agents en cours.">Superset</span>, avec leur propre rôle IAM. Sur une MicroVM, l'agent démarre l'app avec sa branche Neon, ouverte sans login, les <span class="gl" tabindex="0" data-def="Un mot de passe ou une clé d'accès que le code utilise, et qui ne doit jamais apparaître en clair.">secrets</span> de dev tirés par le rôle de la machine, et les tâches de fond sur une branche de dev de Trigger.dev nommée d'après la branche git.</p></div>
+  <div class="trap"><b>Tout ce que contient le parent se retrouve dans chaque copie</b><span>C'est la base parente qu'il faut nettoyer ou pseudonymiser, une seule fois, et non chaque branche. Une copie hérite aussi des mots de passe du parent : réinitialisez-les au premier usage.</span></div>
+</section>
+
+<section>
+  <h2>À essayer chez vous</h2>
+  <ol>
+    <li>Un marqueur du dernier succès par environnement, qui n'avance que sur un succès complet.</li>
+    <li>Des vagues calculées depuis le graphe de dépendances.</li>
+    <li>Un run à la fois, une file où le dernier merge remplace ceux qui attendaient, et un garde contre les vieux runs relancés.</li>
+    <li>Les données après l'infra, jamais en parallèle.</li>
+    <li>Pool chaud si c'est l'infra qui coûte, copy-on-write si ce sont les données.</li>
+    <li>Données synthétiques par défaut, tiers simulés par défaut.</li>
+    <li>Un bail qui expire, une libération au merge.</li>
+    <li>Un contrôle d'isolement qui compare aux cibles de prod avant d'écrire.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="09-monorepo.html">← Tronc</a><a href="11-frictions-dora.html">Pouls →</a></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une data platform <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience de novembre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'infrastructure ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+  const tog = document.querySelector(".nav-toggle");
+  function syncNav() {
+    const open = root.dataset.nav === "open";
+    tog.setAttribute("aria-expanded", open);
+    tog.setAttribute("aria-label", open ? "Replier le menu" : "Déplier le menu");
+  }
+  tog.addEventListener("click", () => {
+    if (root.dataset.nav === "open") delete root.dataset.nav; else root.dataset.nav = "open";
+    try { localStorage.setItem("humai-nav", root.dataset.nav || "closed"); } catch (err) {}
+    syncNav();
+  });
+  syncNav();
+})();
+</script>
+<aside class="sub" id="sub" role="dialog" aria-labelledby="sub-t" hidden>
+  <button class="x" type="button" aria-label="Fermer">×</button>
+  <b id="sub-t">Recevoir les prochains posts</b>
+  <p>Un email à chaque nouveau post Humai, rien d'autre. Désinscription en un clic.</p>
+  <form action="https://buttondown.com/api/emails/embed-subscribe/davidbanquet" method="post" target="_blank">
+    <input type="email" name="email" required placeholder="vous@exemple.fr" aria-label="Votre email" autocomplete="email">
+    <button type="submit">M'abonner</button>
+  </form>
+</aside>
+<script>
+(() => {
+  const box = document.getElementById("sub"), end = document.querySelector(".pager");
+  let seen = null;
+  try { seen = localStorage.getItem("humai-sub"); } catch (e) {}
+  if (!box || !end || seen || !("IntersectionObserver" in window)) return;
+  function close(v) {
+    box.classList.remove("on");
+    setTimeout(() => { box.hidden = true; }, 250);
+    try { localStorage.setItem("humai-sub", v); } catch (e) {}
+  }
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    box.hidden = false;
+    requestAnimationFrame(() => box.classList.add("on"));
+  });
+  io.observe(end);
+  box.querySelector(".x").addEventListener("click", () => close("closed"));
+  box.querySelector("form").addEventListener("submit", () => close("subscribed"));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) close("closed"); });
+})();
+</script>
+</body>
+</html>

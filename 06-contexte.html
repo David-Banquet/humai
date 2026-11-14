@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Un contexte qu'on atteint et qu'on parcourt</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}try{if(localStorage.getItem("humai-nav")==="open")document.documentElement.dataset.nav="open"}catch(e){}</script>
+<meta name="description" content="Brancher les sources du contexte, écrire ce qui ne l'est pas, puis s'y orienter par mot-clé, par le sens et avec une carte.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Humai">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Un contexte qu'on atteint et qu'on parcourt">
+<meta property="og:description" content="Brancher les sources du contexte, écrire ce qui ne l'est pas, puis s'y orienter par mot-clé, par le sens et avec une carte.">
+<meta property="og:url" content="https://humai-lab.fr/06-contexte.html">
+<meta property="og:image" content="https://humai-lab.fr/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Le cerveau feuillu de Humai, à côté du nom et de la devise : l'humain au centre de sa relation à l'IA.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon-64.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.illus{background:#FBF7EC;padding:0 0 10px}.illus img{border-radius:6px 6px 0 0}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram:not(.illus) img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] [data-for="initie"],html[data-level="initie"] [data-for="novice"],html:not([data-level]) [data-for="novice"]{display:none}
+.card .rt{color:var(--muted);font:500 .75rem/1 var(--mono)}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand,.nav-toggle{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:760px){
+  body{padding-left:80px;transition:padding-left .2s}
+  html[data-nav="open"] body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;z-index:6;width:64px;margin:0;padding:18px 8px;border-bottom:none;border-right:1px solid var(--rule);overflow:hidden auto;transition:width .2s}
+  html[data-nav="open"] .topnav{width:270px}
+  .topnav ol{flex-direction:column;max-width:none;gap:2px;font-size:.88rem}
+  .topnav a{gap:0;padding:8px 13px}
+  .topnav .lbl{margin-left:10px;overflow:hidden;text-overflow:ellipsis;transition:opacity .2s}
+  html:not([data-nav="open"]) .topnav .lbl{opacity:0;width:0;margin-left:0}
+  .topnav .brand{display:flex;align-items:center;padding:0 7px 12px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px;flex:none}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;width:48px;height:34px;margin:0 0 12px;padding:0;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--muted);cursor:pointer}
+  .nav-toggle:hover,.nav-toggle:focus-visible{color:var(--ink)}
+  .nav-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .nav-toggle svg{transition:transform .2s}
+  html[data-nav="open"] .nav-toggle svg{transform:rotate(180deg)}
+}
+@media (prefers-reduced-motion:reduce){body,.topnav,.topnav .lbl,.nav-toggle svg{transition:none}}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+.sub{position:fixed;right:16px;bottom:16px;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 28px rgba(21,39,46,.18);display:flex;flex-direction:column;gap:8px;transform:translateY(12px);opacity:0;transition:transform .25s,opacity .25s}
+.sub.on{transform:none;opacity:1}
+.sub b{font:600 1.05rem var(--display)}
+.sub p{margin:0;font-size:.88rem;color:var(--muted)}
+.sub form{display:flex;gap:6px;flex-wrap:wrap}
+.sub input{flex:1 1 160px;min-width:0;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--ground);color:var(--ink)}
+.sub button[type=submit]{font:600 .9rem var(--body);padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--surface);cursor:pointer}
+.sub .x{position:absolute;top:6px;right:8px;border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px}
+.sub :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="topnav" id="modules" aria-label="Modules"><a class="brand" href="index.html"><img src="img/favicon-180.png" alt="" width="34" height="34"><span class="lbl">Humai</span></a><button class="nav-toggle" type="button" aria-controls="modules" aria-expanded="false" aria-label="Déplier le menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><ol><li><a href="index.html" title="Sommaire"><img class="fi" src="img/favicon-64.png" alt="" width="20" height="20"><span class="lbl">Sommaire</span></a></li><li><a href="01-charge-cognitive.html" title="Charge cognitive"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20"><span class="lbl">Charge cognitive</span></a></li><li><a href="02-boucles.html" title="Humain sur la boucle"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20"><span class="lbl">Humain sur la boucle</span></a></li><li><a href="03-skills.html" title="Intentions et compétences"><img class="fi" src="img/modules/skills.png" alt="" width="20" height="20"><span class="lbl">Intentions et compétences</span></a></li><li><a href="04-harnais.html" title="Harnais"><img class="fi" src="img/modules/harnais.png" alt="" width="20" height="20"><span class="lbl">Harnais</span></a></li><li><a href="05-garde-fous.html" title="Garde-fous"><img class="fi" src="img/modules/garde-fous.png" alt="" width="20" height="20"><span class="lbl">Garde-fous</span></a></li><li><a href="06-contexte.html" title="Contexte" aria-current="page"><img class="fi" src="img/modules/contexte.png" alt="" width="20" height="20"><span class="lbl">Contexte</span></a></li><li><a href="07-ecrit.html" title="Culture de l'écrit"><img class="fi" src="img/modules/ecrit.png" alt="" width="20" height="20"><span class="lbl">Culture de l'écrit</span></a></li><li><a href="08-memoire.html" title="Mémoire"><img class="fi" src="img/modules/memoire.png" alt="" width="20" height="20"><span class="lbl">Mémoire</span></a></li><li><a href="09-monorepo.html" title="Tronc"><img class="fi" src="img/modules/monorepo.png" alt="" width="20" height="20"><span class="lbl">Tronc</span></a></li><li><a href="10-cd.html" title="Branches"><img class="fi" src="img/modules/cd.png" alt="" width="20" height="20"><span class="lbl">Branches</span></a></li><li><a href="11-frictions-dora.html" title="Pouls"><img class="fi" src="img/modules/frictions-dora.png" alt="" width="20" height="20"><span class="lbl">Pouls</span></a></li><li><a href="lexique.html" title="Lexique"><span class="fi fi-gl" aria-hidden="true">Aa</span><span class="lbl">Lexique</span></a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Contexte · <span data-for="novice">⌚ 5 min</span><span data-for="initie">⌚ 5 min</span></span>
+  <h1>Un contexte qu'on atteint et qu'on parcourt</h1>
+  <p class="lede">Un <span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> ne sait que ce qu'on lui donne à lire. Le contexte d'une équipe, lui, est éparpillé : des conversations, des tâches, des documents, du code, des données. Il faut d'abord le rendre accessible, en branchant chaque source et en écrivant ce qui ne l'est pas encore. Puis l'agent doit s'y orienter sans tout lire, avec des recherches et des index qui lui servent de boussole.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>Y accéder</h2>
+  <p>On y arrive en 3 étapes.</p>
+  <h3>1. Brancher chaque source par le même protocole</h3>
+  <p>Chaque outil de l'équipe garde une part du contexte : la messagerie les discussions, l'outil de pilotage les tâches, le <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span> le code et sa documentation, la base les données. Un protocole commun, le <span class="gl" tabindex="0" data-def="Model Context Protocol : un standard qui permet à une IA d'utiliser un outil extérieur, ici notre outil de pilotage, comme s'il faisait partie d'elle.">MCP</span>, permet à l'agent de les interroger toutes de la même façon : un connecteur par source, qui dit ce qu'elle sait faire. L'agent n'a plus à deviner où chercher, ni l'humain à copier-coller.</p>
+  <p>Un connecteur est aussi une porte. Il hérite des règles d'accès de la source, en lecture seule par défaut, et chaque <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span> n'ouvre que ceux dont sa tâche a besoin (<a href="05-garde-fous.html">Garde-fous</a> et <a href="08-memoire.html">Mémoire</a>).</p>
+  <figure class="diagram illus"><img src="img/contexte-brancher.webp" alt="Un robot au centre, relié par des câbles en pointillés à 4 boîtes : « Messagerie », « Tâches », « Documentation », « Données ». Chaque câble finit par la même prise : « Un seul protocole »." width="1536" height="1024" loading="lazy"><figcaption>Une prise par source, la même pour toutes.</figcaption></figure>
+  <h3>2. Des échanges tracés</h3>
+  <p>Une source ne vaut que par ce qu'elle contient. Ce qui se dit à la machine à café ou en appel n'est écrit nulle part : ni l'agent ni le collègue absent ne pourront le relire. Ce qui s'écrit dans une messagerie, en <span class="gl" tabindex="0" data-def="Sous un message Slack, la suite de réponses qui en discutent, sans encombrer le canal.">fil</span> sous le message qui l'a lancé, reste attaché à son sujet, daté, avec ses auteurs. L'outil compte moins que l'habitude d'écrire, qui fait l'objet du module suivant (<a href="07-ecrit.html">Culture de l'écrit</a>).</p>
+  <figure class="diagram illus"><img src="img/contexte-trace.webp" alt="À gauche, « À l'oral » : 2 personnes discutent à la machine à café, leurs bulles s'envolent et s'effacent, et un robot resté dehors se pose une question. À droite, « En fil » : les mêmes écrivent, leurs messages s'empilent en fil, et le robot les lit." width="1536" height="1024" loading="lazy"><figcaption>Ce qui se dit s'efface ; ce qui s'écrit en fil se relit.</figcaption></figure>
+  <h3>3. Une documentation qui vit avec le code</h3>
+  <p>Les instructions de l'agent, les procédures d'exploitation, les décisions d'architecture et leurs raisons s'écrivent dans le dépôt, à côté du code qu'elles décrivent. Elles changent dans la même <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> que lui et se relisent avec lui. Une documentation rangée ailleurs dérive en silence : on la retrouve juste ou fausse, sans savoir laquelle des deux.</p>
+  <figure class="diagram illus"><img src="img/contexte-docs.webp" alt="Un robot pousse une caisse qui contient à la fois du code et 3 livres, « Instructions », « Procédures », « Décisions », pendant qu'une femme vérifie un livre : « Avec le code »." width="1536" height="1024" loading="lazy"><figcaption>La documentation voyage avec le code qu'elle décrit.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p><span class="gl" tabindex="0" data-def="La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.">Claude Code</span> a des serveurs <span class="gl" tabindex="0" data-def="Model Context Protocol : un standard qui permet à une IA d'utiliser un outil extérieur, ici notre outil de pilotage, comme s'il faisait partie d'elle.">MCP</span> pour <span class="gl" tabindex="0" data-def="Notre outil interne de pilotage : on y écrit les features, les plans et les tâches, et on peut l'appeler depuis Slack.">Odette</span>, notre outil de pilotage, pour <span class="gl" tabindex="0" data-def="La messagerie de l'équipe : des canaux par sujet, et des fils de discussion sous chaque message.">Slack</span>, pour une réplique en lecture seule de la base de l'application et pour les prospects (<a href="09-monorepo.html">Tronc</a>). Chaque périmètre du monorepo a son fichier d'instructions et ses procédures dans le <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span>. Une mémoire d'équipe digère chaque jour les fils Slack et les tâches, et en injecte l'essentiel au démarrage d'une <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">session</span> (<a href="08-memoire.html">Mémoire</a>).</p></div>
+</section>
+
+<section>
+  <h2>S'y orienter</h2>
+  <p>Tout brancher ne suffit pas : un dépôt compte des milliers de fichiers, une messagerie des années de fils. L'agent ne peut pas tout lire, et ne le doit pas, puisque chaque ligne lue occupe son contexte. Il lui faut des façons de trouver vite le bon endroit, en 4 étapes de plus.</p>
+  <h3>4. Chercher par mot-clé</h3>
+  <p>Le harnais de l'agent (<a href="04-harnais.html">Harnais</a>) lui donne des outils de recherche simples : lister les fichiers dont le nom correspond à un motif, chercher un mot dans tout le code, ouvrir un fichier à la bonne ligne. L'agent s'en sert comme un développeur : il cherche un nom, lit ce qu'il trouve, en déduit le mot suivant à chercher. Son contexte se remplit au fil de l'enquête, avec ce qui sert à la tâche, et seulement ça.</p>
+  <p>Cette recherche simple tient la comparaison avec des méthodes plus savantes. Boris Cherny, qui a créé <span class="gl" tabindex="0" data-def="La version de Claude qui travaille directement dans le code d'un projet : elle lit les fichiers, lance des commandes et écrit le code, depuis le terminal du développeur.">Claude Code</span>, raconte que les premières versions rangeaient le code dans une base vectorielle, qui cherche par proximité de sens, et que l'équipe l'a abandonnée : la recherche menée par l'agent lui-même donnait de meilleurs résultats, sans copie du code à tenir à jour.</p>
+  <figure class="diagram illus"><img src="img/contexte-mot-cle.webp" alt="Dans une immense bibliothèque, un petit robot à la loupe repère un mot surligné sur quelques tranches et sort un seul livre : « Chercher par mot-clé »." width="1536" height="1024" loading="lazy"><figcaption>Un mot, puis le suivant : l'enquête remplit le contexte.</figcaption></figure>
+  <h3>5. Suivre le sens avec un serveur de langage</h3>
+  <p>Un mot-clé trouve un texte, pas un sens. 2 fonctions qui portent le même nom, un champ renommé, une méthode appelée à travers une interface : la recherche textuelle les confond ou les manque. Un serveur de langage, celui qui fait marcher « aller à la définition » et « trouver les références » dans un éditeur, connaît la structure du code. Branché sur l'agent par le protocole <span class="gl" tabindex="0" data-def="Language Server Protocol : le protocole par lequel un éditeur, ou un agent, interroge un serveur qui connaît la structure du code : où une fonction est définie, où elle est utilisée, quelles erreurs de types il y a.">LSP</span>, il lui donne la définition exacte d'un symbole, tous ses usages, son type, et les erreurs que son changement vient d'introduire.</p>
+  <figure class="diagram illus"><img src="img/contexte-lsp.webp" alt="2 livres ouverts. Un robot tire un fil d'un mot entouré vers sa définition, puis vers ses usages dans d'autres pages ; un mot identique mais différent reste à l'écart : « Suivre le sens »." width="1536" height="1024" loading="lazy"><figcaption>Le même mot n'est pas toujours la même chose.</figcaption></figure>
+  <h3>6. Une carte du code</h3>
+  <p>Un graphe de connaissances va plus loin. Il analyse le dépôt une fois et en tire une carte : les fichiers, les fonctions, qui appelle qui, et les quartiers que forment les parties qui se parlent beaucoup. L'agent lit la carte avant les fichiers et sait par où entrer. <a href="https://github.com/Graphify-Labs/graphify">Graphify</a> en est un exemple : il construit ce graphe en local, sans base vectorielle, et en tire un rapport que l'agent lit avant de chercher dans les fichiers. La limite est celle de toutes les cartes : elle date du jour où on l'a dessinée, et il faut la refaire quand le terrain change.</p>
+  <figure class="diagram illus"><img src="img/contexte-carte.webp" alt="Un robot et une femme déplient une grande carte : des quartiers colorés reliés par des routes en pointillés, et une épingle sur un point : « Une carte du code »." width="1536" height="1024" loading="lazy"><figcaption>Lire la carte avant d'entrer dans les rues.</figcaption></figure>
+  <h3>7. Une boussole, pas une réponse</h3>
+  <p>Un index, une carte ou un graphe ne remplacent pas la lecture. Ils servent de boussole : ils indiquent la direction, le fichier à ouvrir d'abord, la partie du code qui a le plus de chances d'être en cause. L'agent vérifie ensuite sur place, dans le code lui-même. C'est aussi leur limite : une boussole mal réglée envoie loin avec assurance, et un index périmé se trompe sans le dire.</p>
+  <figure class="diagram illus"><img src="img/contexte-boussole.webp" alt="Entre de grandes feuilles de papier dressées comme une forêt, un robot tient une boussole ; une flèche en pointillés indique un passage étroit : « Une direction, pas la réponse »." width="1536" height="1024" loading="lazy"><figcaption>La boussole montre où aller ; le chemin, il faut encore le faire.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Le serveur de langage de <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span>, <code>pyright</code>, est activé pour tous dans la <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> depuis août 2026 : Claude Code y trouve définitions, références et erreurs de types sans passer par une recherche textuelle.</p></div>
+  <div class="trap"><b>Un serveur de langage introuvable</b><span>Le plugin lançait le serveur depuis les chemins de la machine, où il n'était pas installé. Celui de l'environnement du projet restait invisible, et chaque appel de l'agent échouait. Le serveur est désormais installé pour toute la machine à la préparation de l'environnement.</span></div>
+</section>
+
+<section>
+  <h2>À essayer chez vous</h2>
+  <ol>
+    <li>Branchez chaque source de contexte par un protocole commun, en lecture seule par défaut.</li>
+    <li>Ce qui n'est pas écrit n'est pas une source : faites passer les échanges à l'écrit, en fil.</li>
+    <li>Rangez la documentation avec le code, et relisez-la dans la même PR.</li>
+    <li>Laissez l'agent chercher par mot-clé avant de lui construire un index.</li>
+    <li>Donnez-lui le sens du code par un serveur de langage, et une carte quand le dépôt grandit.</li>
+    <li>Un index indique la direction ; la vérification se fait dans le code.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="05-garde-fous.html">← Garde-fous</a><a href="07-ecrit.html">Culture de l'écrit →</a></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience de novembre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'<span class="gl" tabindex="0" data-def="Les machines, réseaux, bases de données et services sur lesquels tourne le code, souvent décrits eux-mêmes dans du code.">infrastructure</span> ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+  const tog = document.querySelector(".nav-toggle");
+  function syncNav() {
+    const open = root.dataset.nav === "open";
+    tog.setAttribute("aria-expanded", open);
+    tog.setAttribute("aria-label", open ? "Replier le menu" : "Déplier le menu");
+  }
+  tog.addEventListener("click", () => {
+    if (root.dataset.nav === "open") delete root.dataset.nav; else root.dataset.nav = "open";
+    try { localStorage.setItem("humai-nav", root.dataset.nav || "closed"); } catch (err) {}
+    syncNav();
+  });
+  syncNav();
+})();
+</script>
+<aside class="sub" id="sub" role="dialog" aria-labelledby="sub-t" hidden>
+  <button class="x" type="button" aria-label="Fermer">×</button>
+  <b id="sub-t">Recevoir les prochains posts</b>
+  <p>Un email à chaque nouveau post Humai, rien d'autre. Désinscription en un clic.</p>
+  <form action="https://buttondown.com/api/emails/embed-subscribe/davidbanquet" method="post" target="_blank">
+    <input type="email" name="email" required placeholder="vous@exemple.fr" aria-label="Votre email" autocomplete="email">
+    <button type="submit">M'abonner</button>
+  </form>
+</aside>
+<script>
+(() => {
+  const box = document.getElementById("sub"), end = document.querySelector(".pager");
+  let seen = null;
+  try { seen = localStorage.getItem("humai-sub"); } catch (e) {}
+  if (!box || !end || seen || !("IntersectionObserver" in window)) return;
+  function close(v) {
+    box.classList.remove("on");
+    setTimeout(() => { box.hidden = true; }, 250);
+    try { localStorage.setItem("humai-sub", v); } catch (e) {}
+  }
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    box.hidden = false;
+    requestAnimationFrame(() => box.classList.add("on"));
+  });
+  io.observe(end);
+  box.querySelector(".x").addEventListener("click", () => close("closed"));
+  box.querySelector("form").addEventListener("submit", () => close("subscribed"));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) close("closed"); });
+})();
+</script>
+</body>
+</html>
