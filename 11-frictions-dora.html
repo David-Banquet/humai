@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prendre le pouls : les frictions, puis le flux</title>
+<script>try{document.documentElement.dataset.level=localStorage.getItem("humai-level")||"novice"}catch(e){document.documentElement.dataset.level="novice"}try{if(localStorage.getItem("humai-nav")==="open")document.documentElement.dataset.nav="open"}catch(e){}</script>
+<meta name="description" content="Journal des irritants, pas de sur-ingénierie, frictions pour 100 appels, et les 5 métriques DORA chaque semaine.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Humai">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Prendre le pouls : les frictions, puis le flux">
+<meta property="og:description" content="Journal des irritants, pas de sur-ingénierie, frictions pour 100 appels, et les 5 métriques DORA chaque semaine.">
+<meta property="og:url" content="https://humai-lab.fr/11-frictions-dora.html">
+<meta property="og:image" content="https://humai-lab.fr/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Le cerveau feuillu de Humai, à côté du nom et de la devise : l'humain au centre de sa relation à l'IA.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon-64.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Montserrat:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#FEF9EB; --surface:#FFFDF7; --ink:#15272E; --muted:#4D5E63; --rule:#E8DDC7;
+  --accent:#A9553A; --accent-soft:#FDE6DA; --warn:#A4471B; --warn-soft:#FBE3D6;
+  --ex:#56664F; --ex-soft:#ECF0E8;
+  --l1:#CD785C; --l2:#98A395; --l3:#FC966F; --l4:#15272E;
+  --code-bg:#F5EDDA;
+  --dot:#FC966F;
+  --display:"Fraunces", Georgia, serif;
+  --body:"Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+    --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+    --ex:#BCC8B8; --ex-soft:#22383E;
+    --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+    --code-bg:#1F3840;
+    --dot:#FEF9EB;
+    --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#15272E; --surface:#1B3139; --ink:#FEF9EB; --muted:#B8C2BC; --rule:#2D464E;
+  --accent:#FC966F; --accent-soft:#3B3029; --warn:#FC966F; --warn-soft:#3B2A22;
+  --ex:#BCC8B8; --ex-soft:#22383E;
+  --l1:#FC966F; --l2:#BCC8B8; --l3:#CD785C; --l4:#FEF9EB;
+  --code-bg:#1F3840;
+  --dot:#FEF9EB;
+  --ico-halo:drop-shadow(0 0 1px rgba(254,249,235,.55));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background-color:var(--ground);background-image:radial-gradient(color-mix(in srgb,var(--dot) 60%,transparent) 1.4px,transparent 1.6px);background-size:39px 39px;color:var(--ink);font:400 16px/1.65 var(--body);padding-inline:16px;padding-block:0 80px}
+main{max-width:760px;margin:40px auto 0;background:var(--ground);box-shadow:0 0 0 28px var(--ground);border-radius:2px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2.1rem,5vw,3.1rem);font-weight:400;letter-spacing:-.01em}
+h2{font-size:1.7rem;font-weight:400}
+h3{font-size:1.15rem;font-weight:500}
+p{margin:0}
+b{font-weight:600}
+section{display:flex;flex-direction:column;gap:16px}
+header{display:flex;flex-direction:column;gap:18px}
+.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:1.15rem;color:var(--muted);max-width:62ch}
+a{color:var(--accent)}
+code{font:400 .86em var(--mono);background:var(--code-bg);padding:.1em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{margin:0;background:var(--code-bg);border-radius:8px;padding:14px 16px;overflow-x:auto;font:400 .84rem/1.55 var(--mono)}
+pre code{background:none;padding:0;font-size:inherit;overflow-wrap:normal}
+ul,ol{margin:0;padding-left:1.25em;display:flex;flex-direction:column;gap:8px}
+.note{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 8px 8px 0}
+.ex{border:1px solid var(--rule);border-left:3px solid var(--ex);background:var(--surface);padding:14px 16px;border-radius:0 10px 10px 0;display:flex;flex-direction:column;gap:10px}
+.ex > .k{font:500 .72rem/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ex)}
+.trap{border-left:3px solid var(--warn);background:var(--warn-soft);padding:12px 16px;border-radius:0 8px 8px 0;display:flex;flex-direction:column;gap:6px}
+.apercu{margin:0 0 4px;border-left:3px solid var(--warn);background:var(--warn-soft);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.95rem}.apercu b{margin-right:6px}
+.trap b{color:var(--warn)}
+.traps{display:flex;flex-direction:column;gap:12px}
+.table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--rule);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:none}
+th{font:500 .72rem var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.diagram{margin:0;background:#FFFFFF;border:1px solid var(--rule);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:8px;overflow-x:auto}
+.diagram img{display:block;width:100%;height:auto}
+.illus{background:#FBF7EC;padding:0 0 10px}.illus img{border-radius:6px 6px 0 0}
+.diagram figcaption{color:#4D5E63;font:500 .85rem/1.4 var(--body);text-align:center}
+@media (max-width:640px){.diagram:not(.illus) img{min-width:640px}.diagram figcaption{text-align:left}}
+.mermaid-wrap{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;overflow-x:auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.stat .big{font:700 1.7rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat .lbl{color:var(--muted);font-size:.9rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+@media (min-width:1100px){.cards{grid-template-columns:repeat(5,1fr)}}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:18px 12px 16px;min-height:190px;background:var(--surface);border:1px solid var(--rule);border-radius:6px;color:var(--ink);text-decoration:none;text-align:center;overflow:hidden}
+.card:hover,.card:focus-visible{border-color:var(--accent)}
+.card .ico{width:88px;height:88px;flex:none;filter:var(--ico-halo,none)}
+.card b{font:500 1.02rem/1.25 var(--display);text-wrap:balance}
+.card .d{color:var(--muted);font-size:.88rem;line-height:1.45}
+@media (hover:hover){
+  .card .d{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:var(--surface);color:var(--ink);opacity:0;transition:opacity .18s ease}
+  .card:hover .d,.card:focus-visible .d{opacity:1}
+}
+main.wide{max-width:1120px}
+main.wide > section:not(.mods),main.wide > header{max-width:760px}
+.status{font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.s-done{color:var(--ex)} .s-wip{color:var(--l3)} .s-next{color:var(--muted)}
+.form-mock{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.form-mock .q-chip{align-self:flex-start;font:500 .7rem/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:5px 8px;border-radius:999px}
+.form-mock .q{font-weight:600}
+.form-mock .opt{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.form-mock .opt span{color:var(--muted);font-size:.92rem}
+.form-mock .rec{border-color:var(--accent);background:var(--accent-soft)}
+.form-mock .other{border-style:dashed}
+.rings{display:grid;grid-template-columns:minmax(0,240px) 1fr;gap:28px;align-items:center}
+.rings svg{width:100%;height:auto;max-width:240px}
+.legend{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.legend li{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start}
+.legend .dot{width:12px;height:12px;border-radius:50%;margin-top:7px}
+.legend span.t{display:block;color:var(--muted);font-size:.9rem}
+.topnav{position:sticky;top:0;z-index:5;background:var(--ground);border-bottom:1px solid var(--rule);margin-inline:-16px;padding:10px 16px;overflow-x:auto}
+.topnav ol{list-style:none;margin:0 auto;padding:0;display:flex;gap:4px;flex-direction:row;max-width:760px;white-space:nowrap;font:500 .8rem/1.2 var(--body)}
+.topnav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+.topnav .fi{width:22px;height:22px;flex:none;filter:var(--ico-halo,none)}
+.topnav .fi-gl{display:inline-flex;align-items:center;justify-content:center;border:1px solid currentColor;border-radius:5px;font:600 .68rem/1 var(--display);filter:none}
+html[data-level="novice"] .ex:not(.ex-keep){display:none}
+.level{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.level .seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;padding:3px;background:var(--surface)}
+.level button{font:500 .85rem/1 var(--body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer}
+.level button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}
+.level button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.level .hint{color:var(--muted);font-size:.85rem;max-width:44ch}
+html:not([data-level]) .level{display:none}
+html[data-level="novice"] [data-for="initie"],html[data-level="initie"] [data-for="novice"],html:not([data-level]) [data-for="novice"]{display:none}
+.card .rt{color:var(--muted);font:500 .75rem/1 var(--mono)}
+.gl{text-decoration:underline dotted;text-decoration-color:var(--muted);text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help}
+.gl:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+#gl-tip{position:fixed;z-index:20;max-width:min(320px,calc(100vw - 16px));background:var(--ink);color:var(--ground);font:400 .86rem/1.45 var(--body);padding:8px 11px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.2);pointer-events:none}
+#gl-tip[hidden]{display:none}
+.glossary{margin:0;display:grid;grid-template-columns:minmax(0,13rem) 1fr;gap:14px 24px}
+.glossary dt{font:500 1.02rem/1.4 var(--display)}
+.glossary dd{margin:0;color:var(--ink)}
+.glossary dt:target,.glossary dt:target + dd{background:var(--accent-soft)}
+@media (max-width:620px){.glossary{grid-template-columns:1fr;gap:4px}.glossary dd{margin-bottom:12px}}
+.topnav .brand,.nav-toggle{display:none}
+.hero{margin:8px 0 0;border-radius:6px;overflow:hidden;border:1px solid var(--rule);background:#FEF9EB}
+.hero img{display:block;width:100%;height:auto}
+@media (min-width:760px){
+  body{padding-left:80px;transition:padding-left .2s}
+  html[data-nav="open"] body{padding-left:286px}
+  .topnav{position:fixed;inset:0 auto 0 0;z-index:6;width:64px;margin:0;padding:18px 8px;border-bottom:none;border-right:1px solid var(--rule);overflow:hidden auto;transition:width .2s}
+  html[data-nav="open"] .topnav{width:270px}
+  .topnav ol{flex-direction:column;max-width:none;gap:2px;font-size:.88rem}
+  .topnav a{gap:0;padding:8px 13px}
+  .topnav .lbl{margin-left:10px;overflow:hidden;text-overflow:ellipsis;transition:opacity .2s}
+  html:not([data-nav="open"]) .topnav .lbl{opacity:0;width:0;margin-left:0}
+  .topnav .brand{display:flex;align-items:center;padding:0 7px 12px;color:var(--ink);text-decoration:none;font:500 1.25rem/1.1 var(--display)}
+  .topnav .brand img{width:34px;height:34px;border-radius:6px;flex:none}
+  .nav-toggle{display:flex;align-items:center;justify-content:center;width:48px;height:34px;margin:0 0 12px;padding:0;border:1px solid var(--rule);border-radius:6px;background:var(--surface);color:var(--muted);cursor:pointer}
+  .nav-toggle:hover,.nav-toggle:focus-visible{color:var(--ink)}
+  .nav-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .nav-toggle svg{transition:transform .2s}
+  html[data-nav="open"] .nav-toggle svg{transform:rotate(180deg)}
+}
+@media (prefers-reduced-motion:reduce){body,.topnav,.topnav .lbl,.nav-toggle svg{transition:none}}
+.topnav a:hover,.topnav a:focus-visible{color:var(--ink);background:var(--surface)}
+.topnav a[aria-current]{color:var(--accent);background:var(--accent-soft)}
+.pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font:500 .95rem var(--display)}
+.pager a{text-decoration:none}
+footer{color:var(--muted);font-size:.9rem;border-top:1px solid var(--rule);padding-top:20px;display:flex;flex-direction:column;gap:8px}
+@media (max-width:620px){.rings{grid-template-columns:1fr}.rings svg{margin:0 auto}}
+.sub{position:fixed;right:16px;bottom:16px;z-index:50;width:min(340px,calc(100vw - 32px));background:var(--surface);color:var(--ink);border:1px solid var(--rule);border-radius:12px;padding:16px 16px 14px;box-shadow:0 8px 28px rgba(21,39,46,.18);display:flex;flex-direction:column;gap:8px;transform:translateY(12px);opacity:0;transition:transform .25s,opacity .25s}
+.sub.on{transform:none;opacity:1}
+.sub b{font:600 1.05rem var(--display)}
+.sub p{margin:0;font-size:.88rem;color:var(--muted)}
+.sub form{display:flex;gap:6px;flex-wrap:wrap}
+.sub input{flex:1 1 160px;min-width:0;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--rule);border-radius:8px;background:var(--ground);color:var(--ink)}
+.sub button[type=submit]{font:600 .9rem var(--body);padding:8px 12px;border:0;border-radius:8px;background:var(--accent);color:var(--surface);cursor:pointer}
+.sub .x{position:absolute;top:6px;right:8px;border:0;background:none;color:var(--muted);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px}
+.sub :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<nav class="topnav" id="modules" aria-label="Modules"><a class="brand" href="index.html"><img src="img/favicon-180.png" alt="" width="34" height="34"><span class="lbl">Humai</span></a><button class="nav-toggle" type="button" aria-controls="modules" aria-expanded="false" aria-label="Déplier le menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button><ol><li><a href="index.html" title="Sommaire"><img class="fi" src="img/favicon-64.png" alt="" width="20" height="20"><span class="lbl">Sommaire</span></a></li><li><a href="01-charge-cognitive.html" title="Charge cognitive"><img class="fi" src="img/modules/charge-cognitive.png" alt="" width="20" height="20"><span class="lbl">Charge cognitive</span></a></li><li><a href="02-boucles.html" title="Humain sur la boucle"><img class="fi" src="img/modules/boucles.png" alt="" width="20" height="20"><span class="lbl">Humain sur la boucle</span></a></li><li><a href="03-skills.html" title="Intentions et compétences"><img class="fi" src="img/modules/skills.png" alt="" width="20" height="20"><span class="lbl">Intentions et compétences</span></a></li><li><a href="04-harnais.html" title="Harnais"><img class="fi" src="img/modules/harnais.png" alt="" width="20" height="20"><span class="lbl">Harnais</span></a></li><li><a href="05-garde-fous.html" title="Garde-fous"><img class="fi" src="img/modules/garde-fous.png" alt="" width="20" height="20"><span class="lbl">Garde-fous</span></a></li><li><a href="06-contexte.html" title="Contexte"><img class="fi" src="img/modules/contexte.png" alt="" width="20" height="20"><span class="lbl">Contexte</span></a></li><li><a href="07-ecrit.html" title="Culture de l'écrit"><img class="fi" src="img/modules/ecrit.png" alt="" width="20" height="20"><span class="lbl">Culture de l'écrit</span></a></li><li><a href="08-memoire.html" title="Mémoire"><img class="fi" src="img/modules/memoire.png" alt="" width="20" height="20"><span class="lbl">Mémoire</span></a></li><li><a href="09-monorepo.html" title="Tronc"><img class="fi" src="img/modules/monorepo.png" alt="" width="20" height="20"><span class="lbl">Tronc</span></a></li><li><a href="10-cd.html" title="Branches"><img class="fi" src="img/modules/cd.png" alt="" width="20" height="20"><span class="lbl">Branches</span></a></li><li><a href="11-frictions-dora.html" title="Pouls" aria-current="page"><img class="fi" src="img/modules/frictions-dora.png" alt="" width="20" height="20"><span class="lbl">Pouls</span></a></li><li><a href="lexique.html" title="Lexique"><span class="fi fi-gl" aria-hidden="true">Aa</span><span class="lbl">Lexique</span></a></li></ol></nav>
+<main>
+<header>
+  <span class="eyebrow">Pouls · Mesure · <span data-for="novice">⌚ 8 min</span><span data-for="initie">⌚ 8 min</span></span>
+  <h1>Prendre le pouls : les frictions, puis le flux</h1>
+  <p class="lede">Prendre le pouls de l'équipe, c'est répondre à 2 questions. Où l'outillage fait-il perdre du temps au quotidien ? Et combien de temps une idée met-elle pour arriver en <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">prod</span>, avec combien d'échecs en route ? La première se mesure par les frictions des <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">sessions</span>, la seconde par les métriques DORA.</p>
+  <div class="level" role="group" aria-label="Niveau de lecture">
+    <span class="seg"><button type="button" data-level="novice">Novice</button><button type="button" data-level="initie">Initié</button></span>
+    <span class="hint" data-for="novice">Les principes, sans le détail technique. Le mode initié montre comment on les applique chez Wavo.</span>
+    <span class="hint" data-for="initie">Avec les encadrés « Chez Wavo » : nos outils, nos réglages, et comment on mène ces chantiers dans Odette.</span>
+  </div>
+</header>
+
+<section>
+  <h2>La méta-boucle : de l'irritant à la règle</h2>
+  <ol>
+    <li><b>Un journal des irritants.</b> Dès qu'une session perd du temps sur l'outillage, elle y ajoute une ligne : date, symptôme, correctif, projet. On le lit en premier quand l'outillage casse sans raison apparente.</li>
+    <li><b>Une mémoire</b> quand l'irritant revient une deuxième fois, ou que sa cause est durable : le fait, le pourquoi, comment l'appliquer.</li>
+    <li><b>Une règle, un garde-fou ou une procédure</b> dans le <span class="gl" tabindex="0" data-def="L'endroit où vivent le code d'un projet et tout son historique, ici sur GitHub.">dépôt</span> quand la mémoire vaut pour toute l'équipe.</li>
+    <li><b>Une mesure</b> avant et après, avec une date de remesure.</li>
+  </ol>
+  <figure class="diagram illus"><img src="img/pouls-boucle.webp" alt="Une boucle de 4 étapes reliées par des flèches : un robot note une ligne dans un carnet « irritant », puis une boîte à fiches « mémoire », un panneau « règle », et un mètre ruban avec un stéthoscope « mesure ». Au centre, un cœur et sa ligne de pouls." width="1536" height="1024" loading="lazy"><figcaption>De l'irritant à la règle, puis la mesure, qui relance la boucle.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Le journal est un fichier global à toutes les <span class="gl" tabindex="0" data-def="Une conversation de travail avec un agent : il reçoit une demande, travaille, et garde en mémoire ce qui s'y est dit jusqu'à la fin.">sessions</span>, <code>~/.claude/papercuts.md</code>, que l'<span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agent</span> remplit lui-même sur consigne des instructions globales, la ligne la plus récente en tête. Il a reçu une quarantaine de lignes le premier mois, et plusieurs nous ont déjà évité de déboguer 2 fois le même problème.</p></div>
+</section>
+
+<section>
+  <h2>Laisser la douleur arriver avant de la traiter</h2>
+  <p>Le code tend vers le désordre, comme l'<span class="gl" tabindex="0" data-def="En physique, la tendance naturelle d'un système à aller vers le désordre, tant qu'on ne dépense pas d'énergie pour le garder organisé.">entropie</span> en physique. L'intention lui donne une direction, le réel le corrige. Laissé sans contrôle, il grossit et s'éloigne de ce qu'on voulait. Chaque développement reste donc pragmatique, ancré dans le réel.</p>
+  <p>La <span class="gl" tabindex="0" data-def="La boucle qui améliore les autres boucles : ce qui frotte dans le travail des agents devient une règle ou un outil, puis on mesure si ça va mieux.">méta-boucle</span> part ainsi d'un irritant <b>vécu</b>, jamais d'un irritant imaginé. C'est un choix : on ne construit rien contre une douleur future.</p>
+  <ul>
+    <li><b>Une douleur anticipée est mal spécifiée.</b> Tant qu'elle n'est pas arrivée, on ignore où elle tombera, à quelle fréquence et ce qu'elle coûtera vraiment. Une solution construite d'avance répond souvent à une autre question que celle qui finira par se poser.</li>
+    <li><b>La sur-ingénierie ralentit.</b> Chaque abstraction, option ou garde-fou ajouté « au cas où » doit être lu, testé et maintenu, et allonge dès maintenant, pour tout le monde, le chemin de l'idée à la prod. Ce coût-là est certain, alors que le bénéfice reste hypothétique.</li>
+    <li><b>Une douleur réelle se corrige vite.</b> Quand elle arrive, on a le symptôme, le contexte et un exemple concret, donc un diagnostic court et un correctif ciblé. Avec des <span class="gl" tabindex="0" data-def="Un programme d'IA qui ne se contente pas de répondre : il agit seul, sur plusieurs étapes (lire du code, lancer des commandes, écrire et tester), jusqu'à l'objectif qu'on lui a donné.">agents</span> qui ouvrent une <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> dans l'heure, attendre ne coûte presque rien.</li>
+    <li><b>On corrige simplement la première fois, on durcit ensuite.</b> Si le problème revient, il devient une mémoire, puis une règle ou un garde-fou. On n'ajoute de la structure qu'après une répétition.</li>
+  </ul>
+  <figure class="diagram illus"><img src="img/pouls-douleur.webp" alt="Sous un ciel dégagé, un homme se bat avec une immense machine à parapluie pleine d'engrenages, panneau « au cas où ». À côté, une femme assise sur un rocher secoue sa chaussure pour en faire tomber un caillou, panneau « vécu ». Un robot est déjà plus loin sur le chemin." width="1536" height="1024" loading="lazy"><figcaption>On enlève le caillou qu'on sent, pas ceux qu'on imagine.</figcaption></figure>
+  <p class="note">La limite : ce qui est irréversible ou touche la sécurité (une suppression en prod, une fuite de données, un accès trop large) ne s'apprend pas par la douleur. Là, les garde-fous se posent avant (<a href="05-garde-fous.html">Garde-fous</a>). Pour tout le reste, laissez vivre la douleur et réagissez ensuite.</p>
+</section>
+
+<section>
+  <h2>Mesurer les frictions des sessions</h2>
+  <p><b>L'attention est tout ce qu'il nous reste.</b> Les <span class="gl" tabindex="0" data-def="Le moteur d'une IA : un programme entraîné sur d'immenses quantités de texte, qui produit la suite la plus probable d'une conversation. Opus et Fable sont des modèles de Claude.">modèles</span> et la puissance de calcul grandissent chaque mois ; le nombre de messages qu'un humain peut envoyer à ses agents dans une journée, lui, ne grandit pas. Il faut donc <b>minimiser le nombre de messages par PR</b> : moins de relances, moins de commandes à lancer à la place de l'agent, et des demandes qui aboutissent du premier coup. C'est la première chose qu'on mesure.</p>
+  <figure class="diagram illus"><img src="img/graph-pouls-attention.webp" alt="Graphique, semaines du 13/10 au 09/11 : la moyenne des messages envoyés par l'humain à ses agents chaque jour ouvré oscille entre 111 et 186, autour d'une ligne pointillée à 150." width="1536" height="896" loading="lazy"><figcaption>Chez Wavo, sur le poste de l'auteur : la moyenne des messages envoyés aux agents par jour ouvré, chaque semaine. Les transcripts antérieurs au 13/10 ne sont plus conservés.</figcaption></figure>
+  <figure class="diagram illus"><img src="img/graph-pouls-messages-par-pr.webp" alt="Graphique, semaines du 12/10 au 02/11 : le nombre moyen de messages de l'humain par PR mergée passe de 5,7 à 6,2, puis 4,0, puis 2,7." width="1536" height="896" loading="lazy"><figcaption>Chez Wavo, sur le poste de l'auteur, tâches closes seulement : 2 fois moins de messages par PR, donc 2 fois plus de travail livré pour la même attention.</figcaption></figure>
+  <div class="stats">
+    <div class="stat"><span class="big">−71 %</span><span class="lbl">de commandes que l'humain tape avec <code>!</code> à la place de l'agent, par tâche, sur les mêmes semaines</span></div>
+  </div>
+  <p>Les <span class="gl" tabindex="0" data-def="L'enregistrement complet d'une session : tout ce que l'agent a lu, fait et répondu.">transcripts</span> des sessions d'agent se mesurent comme n'importe quelle donnée. Un <span class="gl" tabindex="0" data-def="Un petit programme qui enchaîne des commandes pour automatiser un geste.">script</span> les relit et compte les frictions par famille, <b>pour 100 appels d'outils</b>, afin que la mesure ne dépende pas du volume de travail :</p>
+  <ul>
+    <li>commandes refusées, par règle ou par garde-fou, avec leur motif ;</li>
+    <li>erreurs d'outillage : chemin introuvable, motif de recherche vide, attente bloquée ;</li>
+    <li>refus du classificateur de permissions, séparés de ses échecs transitoires ;</li>
+    <li>demandes d'autorisation approuvées par l'humain, que les transcripts n'enregistrent pas : un <span class="gl" tabindex="0" data-def="Un petit programme qui se déclenche tout seul à un moment précis de la vie de l'agent, par exemple quand il veut s'arrêter, pour vérifier ou bloquer quelque chose.">hook</span> les journalise à part, sans jamais rien décider.</li>
+  </ul>
+  <p>3 précautions comptent. D'abord, ne retenir que les <b>tâches closes</b> (sans activité depuis 2 jours), sinon les semaines ne se comparent pas. Ensuite, versionner les scripts de mesure avec leurs tests, pour que tout le monde mesure avec la même définition. Enfin, séparer le travail de l'entreprise de celui des projets personnels ouverts sur la même machine : sans filtre, ces sessions gonflent le volume et brouillent la comparaison d'une semaine à l'autre. Une automatisation hebdomadaire compare les 2 dernières semaines closes et poste la synthèse sur la tâche concernée.</p>
+  <p>Mesurées sur un seul poste, les frictions restent une anecdote : elles décrivent une manière de travailler, pas l'outillage de l'équipe. Mais une mesure ne se partage que si elle ne surveille personne. Chacun envoie sa semaine sous forme de comptes, jamais le contenu de ses sessions, et voit ce qui part avant l'envoi ; la vue d'équipe additionne, sans chiffre ni classement par personne. C'est à cette condition que chacun accepte d'envoyer. <span class="status s-done">en place</span></p>
+  <figure class="diagram illus"><img src="img/graph-pouls-shell.webp" alt="Graphique en barres : 0,80 erreur shell pour 100 appels avant les règles, 0,44 une semaine après, 0,23 quatre semaines après, sous une cible pointillée à 0,40." width="1536" height="896" loading="lazy"><figcaption>Chez Wavo. Quelques règles shell ajoutées aux instructions ont divisé les erreurs par 3,5, bien sous la cible qu'on s'était fixée.</figcaption></figure>
+  <div class="stats">
+    <div class="stat"><span class="big">12 sur 54</span><span class="lbl">refus du classificateur en une semaine qui étaient en fait des échecs transitoires : une famille à part entière</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Le flux : les métriques DORA <span class="status s-done">en place</span></h2>
+  <p>Les frictions de session montrent où l'outil frotte, mais pas si l'équipe livre plus vite et plus sûrement. Pour ça, il y a les indicateurs DORA, issus de 10 ans de recherche sur des dizaines de milliers d'équipes. Leur résultat principal : vitesse et stabilité ne s'opposent pas, les meilleures équipes sont bonnes sur les deux. Les indicateurs vont donc par paire, pour qu'on ne puisse pas améliorer l'un en sacrifiant l'autre : 2 de vitesse, 3 de stabilité.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Indicateur</th><th>Ce qu'il mesure</th><th>Où le lire, en général</th></tr></thead>
+    <tbody>
+      <tr><td><b>Délai de <span class="gl" tabindex="0" data-def="Le moment où une modification arrive dans la version qu'utilisent réellement les clients.">mise en production</span></b></td><td>Vitesse : du début de la tâche au code en prod.</td><td>Événements de la <span class="gl" tabindex="0" data-def="Le service qui héberge le code et ses PR, comme GitHub.">forge</span> (<span class="gl" tabindex="0" data-def="Un enregistrement d'une étape de modification du code, avec un message qui la décrit. Une branche est une suite de commits.">commit</span>, PR, <span class="gl" tabindex="0" data-def="Intégrer une PR relue dans la version principale du code. Après le merge, la modification part vers la production.">merge</span>) et horodatage du déploiement.</td></tr>
+      <tr><td><b>Fréquence de déploiement</b></td><td>Vitesse : combien de mises en prod par semaine.</td><td>L'étape de déploiement réussie de la <span class="gl" tabindex="0" data-def="Déploiement continu : après le merge, la modification part automatiquement en production.">CD</span> (<a href="10-cd.html">Branches</a>).</td></tr>
+      <tr><td><b>Taux d'échec des changements</b></td><td>Stabilité : part des mises en prod réussies qui ont cassé quelque chose. Une CD rouge n'en est pas une : rien n'est parti en prod.</td><td>Un incident dans les 7 jours, dont le correctif touche les mêmes fichiers, ou le revert de l'une des PR livrées.</td></tr>
+      <tr><td><b>Temps de rétablissement</b></td><td>Stabilité : de la panne au retour à la normale.</td><td>De la première alerte au merge du correctif (<a href="02-boucles.html">Humain sur la boucle</a>).</td></tr>
+      <tr><td><b>Taux de reprise</b></td><td>Stabilité : part des PR mergées qui ne font que reprendre une PR récente. Il compte des PR, là où le taux d'échec compte des mises en prod.</td><td>Reverts, correctifs d'incident, et correctifs qui touchent les fichiers d'une PR mergée dans les jours précédents.</td></tr>
+    </tbody>
+  </table></div>
+  <p>3 règles de comptage évitent de se raconter des histoires :</p>
+  <ul>
+    <li><b>Compter ce qui a vraiment tourné.</b> Un merge n'est pas un déploiement : une CD qui ne livre que ce qui a changé ne déploie pas à chaque merge. On compte l'étape de déploiement réussie, et chaque déploiement livre tous les commits depuis le précédent.</li>
+    <li><b>Une panne n'est pas forcément causée par un changement.</b> Elle ne compte dans le taux d'échec que si un correctif lui est rattaché ; les autres sont listées à part. Et une même panne vue par plusieurs sources ne compte qu'une fois.</li>
+    <li><b>Toujours à l'échelle de l'équipe, jamais par personne</b>, et chaque indicateur de vitesse affiché à côté de son pendant de stabilité.</li>
+  </ul>
+  <p>Chaque lundi, une <span class="gl" tabindex="0" data-def="Une session d'agent planifiée à cadence fixe, avec une consigne écrite une fois.">routine</span> publie les 2 familles, frictions et flux, sur une même page, avec un verdict et un levier pour la semaine. Le compte rendu part aussi dans le <span class="gl" tabindex="0" data-def="Dans Slack, un espace de discussion consacré à un sujet.">canal</span> d'atelier de l'équipe, avec les propositions en <span class="gl" tabindex="0" data-def="Sous un message Slack, la suite de réponses qui en discutent, sans encombrer le canal.">fil</span>, une par message : chacun réagit sur celle qu'il veut prendre.</p>
+  <figure class="diagram illus"><img src="img/graph-pouls-deploiements.webp" alt="Graphique, semaines du 07/09 au 02/11 : les déploiements en prod par semaine passent de 26 à 127, puis redescendent à 89." width="1536" height="896" loading="lazy"><figcaption>Chez Wavo, app, tâches de fond et data platform réunies. Le nombre de déploiements en prod a été multiplié par 4 en 6 semaines.</figcaption></figure>
+  <figure class="diagram illus"><img src="img/graph-pouls-lead-time.webp" alt="Graphique en aires empilées, semaines du 07/09 au 02/11, en minutes. En bas, la construction d'une PR, de son ouverture à son dernier commit ; au-dessus, sa relecture, du dernier commit au merge. Le temps total passe de 47 minutes à 1 h 44 début octobre, puis à 2 h la semaine du 02/11, et la relecture en occupe presque toujours la plus grosse part." width="1536" height="896" loading="lazy"><figcaption>Chez Wavo, toutes les PR mergées. La construction va de l'ouverture de la PR à son dernier commit, la relecture du dernier commit au merge ; le temps total empile leurs médianes. Depuis octobre, une PR attend sa relecture au moins 3 fois plus longtemps qu'elle n'a mis à se construire.</figcaption></figure>
+  <p>On n'en attend pas un score, mais une décomposition qui montre où le temps se perd entre l'idée et la prod. Les 2 premiers constats :</p>
+  <ul>
+    <li><b>L'attente de <span class="gl" tabindex="0" data-def="La relecture d'une PR, par un humain ou par un agent, avant le merge.">revue</span>.</b> Presque tout le délai se passe entre le dernier commit et le merge, et l'attente d'une approbation humaine en est une bonne part, maintenant que les agents ouvrent plus de PR qu'un humain n'en relit (<a href="01-charge-cognitive.html">Charge cognitive</a>).</li>
+    <li><b>La reprise.</b> Elle a grimpé 5 semaines d'affilée, jusqu'à une PR sur 3, avant de redescendre à moins d'une sur 5. La hausse venait surtout de parcours d'ingestion cassés par des changements chez les fournisseurs : c'est la reprise qui dit où durcir, avant de livrer encore plus vite.</li>
+  </ul>
+  <figure class="diagram illus"><img src="img/pouls-flux.webp" alt="Une course de relais porte un colis de gauche à droite : l'ampoule « idée », le bureau « code », un banc « revue » où s'empilent des colis sous une énorme horloge, puis la fusée « prod ». Un petit chronomètre au-dessus de chaque étape, bien plus gros au-dessus de la revue. En titre : « Où le temps se perd »." width="1536" height="1024" loading="lazy"><figcaption>On ne cherche pas un score, mais l'endroit où le temps se perd.</figcaption></figure>
+  <div class="ex"><span class="k">Chez Wavo · un exemple, pas une recommandation</span><p>Un <span class="gl" tabindex="0" data-def="Un petit programme qui enchaîne des commandes pour automatiser un geste.">script</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> sans dépendance lit la <span class="gl" tabindex="0" data-def="Le service qui héberge le code et ses PR, comme GitHub.">forge</span> avec <code><span class="gl" tabindex="0" data-def="L'outil en ligne de commande de GitHub : il permet à un script ou à un agent d'interroger GitHub.">gh</span></code> : <span class="gl" tabindex="0" data-def="Pull request : une proposition de modification du code, présentée pour relecture avant d'être intégrée. On la relit, on en discute, puis on la merge.">PR</span> mergées, déploiements de <span class="gl" tabindex="0" data-def="La version en service, celle qu'utilisent les clients, par opposition aux copies de test.">prod</span>, runs de <span class="gl" tabindex="0" data-def="Intégration continue : à chaque PR, une batterie de vérifications automatiques tourne et peut bloquer le merge.">CI</span>. Les incidents viennent de <span class="gl" tabindex="0" data-def="Un service qui collecte les erreurs du code en production et les regroupe en issues.">Sentry</span>, des tâches de fond en échec et des <span class="gl" tabindex="0" data-def="Un enchaînement d'étapes automatiques, lancé par un événement ou à heure fixe.">workflows</span> de prod en échec ; les dates de début de tâche viennent d'<span class="gl" tabindex="0" data-def="Notre outil interne de pilotage : on y écrit les features, les plans et les tâches, et on peut l'appeler depuis Slack.">Odette</span>. Une automatisation <span class="gl" tabindex="0" data-def="L'application qui ouvre un workspace par tâche et montre d'un coup d'œil toutes les sessions d'agents en cours.">Superset</span> collecte ces incidents par les serveurs <span class="gl" tabindex="0" data-def="Model Context Protocol : un standard qui permet à une IA d'utiliser un outil extérieur, ici notre outil de pilotage, comme s'il faisait partie d'elle.">MCP</span>, écrit le verdict, publie la page et prépare le message <span class="gl" tabindex="0" data-def="La messagerie de l'équipe : des canaux par sujet, et des fils de discussion sous chaque message.">Slack</span>.</p></div>
+</section>
+
+<section>
+  <h2>À essayer chez vous</h2>
+  <ol>
+    <li>Ne construisez pas contre une douleur future : attendez qu'elle arrive, sauf si elle est irréversible.</li>
+    <li>Journalisez chaque irritant en une ligne, promouvez-le quand il revient.</li>
+    <li>Normalisez pour 100 appels, ne comptez que les tâches closes.</li>
+    <li>Versionnez et testez vos scripts de mesure.</li>
+    <li>Ne gardez un outil que si une mesure indépendante confirme son gain.</li>
+    <li>Pour le flux, décomposez le délai plutôt que de viser un score.</li>
+  </ol>
+</section>
+<nav class="pager" aria-label="Module précédent et suivant"><a href="10-cd.html">← Branches</a><a href="lexique.html">Lexique →</a></nav>
+<footer>
+  <span>David Banquet Perret · Wavo · une application <span class="gl" tabindex="0" data-def="TypeScript est un langage de programmation très utilisé pour les applications web ; l'application de Wavo est écrite avec.">TypeScript</span> et une <span class="gl" tabindex="0" data-def="La plateforme de données : elle récupère les données des clients (ventes, stocks, banque), les nettoie et les met à disposition de l'application.">data platform</span> <span class="gl" tabindex="0" data-def="Un langage de programmation très utilisé pour traiter des données ; la data platform de Wavo est écrite avec.">Python</span> <span class="gl" tabindex="0" data-def="Sans serveur à gérer soi-même : le code tourne à la demande chez un hébergeur, ici AWS, qui s'occupe des machines.">serverless</span>, développées par une petite équipe et des agents de code.</span>
+  <span>Retour d'expérience de novembre 2026. Les encadrés « Chez Wavo » illustrent, ils ne recommandent rien : prenez les principes, gardez vos outils. Aucune donnée client ni identifiant d'<span class="gl" tabindex="0" data-def="Les machines, réseaux, bases de données et services sur lesquels tourne le code, souvent décrits eux-mêmes dans du code.">infrastructure</span> ici.</span>
+</footer>
+</main>
+<div id="gl-tip" role="tooltip" hidden></div>
+<script>
+(() => {
+  const tip = document.getElementById("gl-tip");
+  let cur = null;
+  function show(el) {
+    cur = el;
+    tip.textContent = el.dataset.def;
+    tip.hidden = false;
+    el.setAttribute("aria-describedby", "gl-tip");
+    const r = el.getBoundingClientRect(), vw = document.documentElement.clientWidth;
+    const x = Math.min(Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2), vw - tip.offsetWidth - 8);
+    let y = r.top - tip.offsetHeight - 8;
+    if (y < 8) y = r.bottom + 8;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hide() {
+    if (cur) cur.removeAttribute("aria-describedby");
+    cur = null;
+    tip.hidden = true;
+  }
+  document.addEventListener("pointerover", e => { const g = e.target.closest(".gl"); if (g) show(g); });
+  document.addEventListener("pointerout", e => {
+    const g = e.target.closest(".gl");
+    if (g && !g.contains(e.relatedTarget) && document.activeElement !== g) hide();
+  });
+  document.addEventListener("focusin", e => { if (e.target.classList.contains("gl")) show(e.target); });
+  document.addEventListener("focusout", e => { if (e.target.classList.contains("gl")) hide(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") hide(); });
+  addEventListener("scroll", () => { if (cur) show(cur); }, {passive: true});
+  const root = document.documentElement;
+  function sync() {
+    for (const b of document.querySelectorAll(".level button")) b.setAttribute("aria-pressed", b.dataset.level === root.dataset.level);
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".level button");
+    if (!b) return;
+    root.dataset.level = b.dataset.level;
+    try { localStorage.setItem("humai-level", b.dataset.level); } catch (err) {}
+    sync();
+  });
+  sync();
+  const tog = document.querySelector(".nav-toggle");
+  function syncNav() {
+    const open = root.dataset.nav === "open";
+    tog.setAttribute("aria-expanded", open);
+    tog.setAttribute("aria-label", open ? "Replier le menu" : "Déplier le menu");
+  }
+  tog.addEventListener("click", () => {
+    if (root.dataset.nav === "open") delete root.dataset.nav; else root.dataset.nav = "open";
+    try { localStorage.setItem("humai-nav", root.dataset.nav || "closed"); } catch (err) {}
+    syncNav();
+  });
+  syncNav();
+})();
+</script>
+<aside class="sub" id="sub" role="dialog" aria-labelledby="sub-t" hidden>
+  <button class="x" type="button" aria-label="Fermer">×</button>
+  <b id="sub-t">Recevoir les prochains posts</b>
+  <p>Un email à chaque nouveau post Humai, rien d'autre. Désinscription en un clic.</p>
+  <form action="https://buttondown.com/api/emails/embed-subscribe/davidbanquet" method="post" target="_blank">
+    <input type="email" name="email" required placeholder="vous@exemple.fr" aria-label="Votre email" autocomplete="email">
+    <button type="submit">M'abonner</button>
+  </form>
+</aside>
+<script>
+(() => {
+  const box = document.getElementById("sub"), end = document.querySelector(".pager");
+  let seen = null;
+  try { seen = localStorage.getItem("humai-sub"); } catch (e) {}
+  if (!box || !end || seen || !("IntersectionObserver" in window)) return;
+  function close(v) {
+    box.classList.remove("on");
+    setTimeout(() => { box.hidden = true; }, 250);
+    try { localStorage.setItem("humai-sub", v); } catch (e) {}
+  }
+  const io = new IntersectionObserver(es => {
+    if (!es.some(e => e.isIntersecting)) return;
+    io.disconnect();
+    box.hidden = false;
+    requestAnimationFrame(() => box.classList.add("on"));
+  });
+  io.observe(end);
+  box.querySelector(".x").addEventListener("click", () => close("closed"));
+  box.querySelector("form").addEventListener("submit", () => close("subscribed"));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !box.hidden) close("closed"); });
+})();
+</script>
+</body>
+</html>
